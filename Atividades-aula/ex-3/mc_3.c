@@ -4,8 +4,8 @@
 #include <math.h>
 
 #define N 100
-#define TF 100000	// Tempo final
-#define EE 1000		// Estado Estacionário
+#define TF 10000000	// Tempo final
+#define EE 10000	// Estado Estacionário
 
 /*
 Aqui eu olhei e assumi que 10000 seria um numero adequado para atingir o equilíbrio, talvez mais que o necessário, 
@@ -30,17 +30,17 @@ int main(){
     
     // Variaveis para a probabilidade
     float probs[N] = {0.};
-    float cont = 0.;	
+    float cont = 0.; // comaça com int	
 
 	for(t; t < TF; t++){
 		rand = (int) uniform(0, N-1);
 		
 		if(rand < urnaA){
-			urnaA--;
-		}else{
-			urnaA++;
-		}
-
+            urnaA--;
+        }else{
+            urnaA++;
+        }
+        // loop separado
         if(t > EE){
             probs[urnaA] += 1.;
             cont += 1.;
@@ -49,7 +49,7 @@ int main(){
 
     for(int i = 0; i < N; i++){
    	    probs[i] /= cont;
-    	fprintf(saida, "%i\t%lf\n", i+1, probs[i]);
+    	fprintf(saida, "%i\t%lf\n", i, probs[i]);
     }
 	
 	fclose(saida);
