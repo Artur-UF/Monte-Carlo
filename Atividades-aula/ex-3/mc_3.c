@@ -3,14 +3,10 @@
 #include <time.h>
 #include <math.h>
 
-#define N 100
+#define N 100		// Número total de bolas
 #define TF 10000000	// Tempo final
 #define EE 10000	// Estado Estacionário
-
-/*
-Aqui eu olhei e assumi que 10000 seria um numero adequado para atingir o equilíbrio, talvez mais que o necessário, 
-e coletei os dados dos próximos 90000 passos, também talvez mais que o necessário.
-*/
+#define TC 101		// Tempo de correlação
 
 int main(){
 	double uniform(double min, double max);
@@ -30,27 +26,36 @@ int main(){
     
     // Variaveis para a probabilidade
     float probs[N] = {0.};
-    float cont = 0.; // comaça com int	
-
-	for(t; t < TF; t++){
+    int cont = 0;
+	
+	// Dinâmica até sair do transiente
+	for(t; t < EE; t++){
 		rand = (int) uniform(0, N-1);
-		
-		if(rand < urnaA){
-            urnaA--;
-        }else{
-            urnaA++;
-        }
-        // loop separado
-        if(t > EE){
-            probs[urnaA] += 1.;
-            cont += 1.;
-        }
+		if(rand < urnaA) urnaA--;
+        else urnaA++;
 	}
 
+	// Coletando do Estado estacionário
+	for(t; t < TF; t++){
+		// Faz a dinâmica
+		rand = (int) uniform(0, N-1);
+		if(rand < urnaA) urnaA--;
+        else urnaA++;
+	    
+	    // Coleta os dados
+	    if(t%TC == 0){
+	        probs[urnaA] += 1.;
+	    	cont++;
+	    }
+	}
+
+	// Escreve o arquivo de saída
     for(int i = 0; i < N; i++){
-   	    probs[i] /= cont;
+   	    probs[i] /= (float) cont;
     	fprintf(saida, "%i\t%lf\n", i, probs[i]);
     }
+	
+	printf("python3 analise3.py %s\n", titulo1);
 	
 	fclose(saida);
 	return 0;
