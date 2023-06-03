@@ -2,9 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import sys
 
-path = sys.argv[1]
-
-simx, simy = np.loadtxt(path, unpack=True)
+simx, simy = np.loadtxt(sys.argv[1], unpack=True)
 exatox, exatoy = np.loadtxt('bin100.dat', unpack=True)
 
 zoom = 30
