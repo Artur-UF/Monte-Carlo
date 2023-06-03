@@ -55,9 +55,11 @@ int main(){
     	fprintf(saida, "%i\t%lf\n", i, probs[i]);
     }
 	
-	printf("python3 analise3.py %s\n", titulo1);
-	
+	// Roda o script de python
 	fclose(saida);
+	char comando[50];
+	sprintf(comando, "python3 analise3.py %s\n", titulo1);
+	system(comando);
 	return 0;
 }
 
