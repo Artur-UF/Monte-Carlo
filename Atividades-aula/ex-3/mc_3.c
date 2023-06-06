@@ -59,7 +59,9 @@ int main(){
 	fclose(saida);
 	char comando[50];
 	sprintf(comando, "python3 analise3.py %s\n", titulo1);
+	printf("%s\n", comando);
 	system(comando);
+	
 	return 0;
 }
 
