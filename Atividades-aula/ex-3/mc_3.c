@@ -13,6 +13,10 @@ int main(){
     double funcao(int t, int na, int n);
     int seed = time(NULL);
     srand(seed);
+	/*
+	for(int i = 0; i < 1000; ++i){
+		printf("%d\n", (int) uniform(0, 100));
+	}*/
 	
     // Criação do arquivo
     char titulo1[20], titulo2[20];
@@ -28,7 +32,7 @@ int main(){
 	
 	// Dinâmica até sair do transiente
 	for(t; t < EE; t++){
-		rand = (int) uniform(1, N);
+		rand = (int) uniform(0, N);
 		if(rand < urnaA) urnaA--;
         else urnaA++;
 	}
@@ -36,7 +40,7 @@ int main(){
 	// Coletando do Estado estacionário
 	for(t; t < TF; t++){
 		// Faz a dinâmica
-		rand = (int) uniform(0, N-2);
+		rand = (int) uniform(0, N);
 		if(rand < urnaA) urnaA--;
         else urnaA++;
 	    
@@ -52,7 +56,7 @@ int main(){
 	// Escreve o arquivo de saída
     for(int i = 0; i < N; i++){
    	    probs[i] /= (float) cont;
-    	fprintf(saida, "%i\t%lf\n", i+1, probs[i]);
+    	fprintf(saida, "%i\t%lf\n", i, probs[i]);
     }
 	
 	// Roda o script de python
