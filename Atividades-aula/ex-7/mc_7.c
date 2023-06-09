@@ -27,7 +27,7 @@ int main(){
         rand2 = uniform(0., 1.);
         if(rand2 < pow(sin(1./rand1), 2)) Nac++;
         if(t%TC == 0){
-            razao = (4.*((float) Nac))/(t);
+            razao = ((float) Nac)/(t);
             fprintf(saida, "%d\t%f\n", t, razao);
         }
     }
@@ -35,7 +35,7 @@ int main(){
 	// Roda o script de python
 	fclose(saida);
 	char comando[50];
-	sprintf(comando, "python3 analise6.py %s\n", titulo1);
+	sprintf(comando, "python3 analise7.py %s\n", titulo1);
 	printf("%s\n", comando);
 	system(comando);
 
