@@ -3,8 +3,8 @@
 #include <time.h>
 #include <math.h>
 
-#define N 1000000  // Número de pontos
-#define TC 100		// "Tempo de correlação"
+#define TA 10000		// Tempo da amostra
+#define NAM 10000.		// Número de amostras
 
 int main(){
     double uniform(double min, double max);
@@ -13,23 +13,31 @@ int main(){
     
     // Criação do arquivo
     char titulo1[20], titulo2[20];
-    sprintf(titulo1, "%i-N%i.txt", seed, N);
+    sprintf(titulo1, "%i-NAM%i.txt", seed, (int) NAM);
 	FILE *saida = fopen(titulo1, "w");
     
     // Definições para a dinâmica
-    int Nac = 0;			// Número de acertos
+    float pi = acos(-1.);
+    int Nac = 0;
     double rand1, rand2;
     int t;
+    double intarr[TA] = {0.};
     float razao;
 
-    for(t = 0; t < N; ++t){
-        rand1 = uniform(0., 1.);
-        rand2 = uniform(0., 1.);
-        if(rand2 < pow(sin(1./rand1), 2)) Nac++;
-        if(t%TC == 0){
-            razao = ((float) Nac)/(t);
-            fprintf(saida, "%d\t%f\n", t, razao);
+    for(int amostra; amostra < NAM; amostra++){
+        for(t = 0; t < TA; ++t){
+            rand1 = uniform(0., 1.);
+            rand2 = uniform(0., 1.);
+        	if(rand2 < pow(sin(1./rand1), 2)) Nac++;
+            razao = ((float) Nac)/(t);        
+            intarr[t] += razao;		// Soma os valores de todas as amostras
         }
+        Nac = 0;		// zera a dinâmica pra fazer outra amostra
+        srand(seed+3);
+    }
+    
+    for(int i = 1; i <= TA; ++i){
+        fprintf(saida, "%d\t%f\n", i, intarr[i-1]/NAM);  // divide pelo numero de amostras
     }
     
 	// Roda o script de python
@@ -41,6 +49,7 @@ int main(){
 
     return 0;
 }
+
 
 double uniform(double min, double max) {
 	/*
