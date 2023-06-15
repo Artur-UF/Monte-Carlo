@@ -3,7 +3,7 @@
 #include <time.h>
 #include <math.h>
 
-#define TA 10000		// Tempo da amostra
+#define TA 10000		// Tamanho da amostra
 #define NAM 1000.		// Número de amostras
 
 int main(){
@@ -33,7 +33,8 @@ int main(){
             piarr[t] += razao;
         }
         Nac = 0;
-        srand(seed+3);
+        seed += 3;
+        srand(seed);
     }
     
     for(int i = 1; i <= TA; ++i){

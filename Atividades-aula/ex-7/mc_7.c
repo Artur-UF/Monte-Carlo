@@ -3,7 +3,7 @@
 #include <time.h>
 #include <math.h>
 
-#define TA 10000		// Tempo da amostra
+#define TA 10000		// Tamanho da amostra
 #define NAM 10000.		// Número de amostras
 
 int main(){
@@ -33,11 +33,12 @@ int main(){
             intarr[t] += razao;		// Soma os valores de todas as amostras
         }
         Nac = 0;		// zera a dinâmica pra fazer outra amostra
-        srand(seed+3);
+        seed += 3;
+        srand(seed);
     }
     
     for(int i = 1; i <= TA; ++i){
-        fprintf(saida, "%d\t%f\n", i, intarr[i-1]/NAM);  // divide pelo numero de amostras
+        fprintf(saida, "%d\t%lf\n", i, intarr[i-1]/NAM);  // divide pelo numero de amostras
     }
     
 	// Roda o script de python
