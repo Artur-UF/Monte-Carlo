@@ -5,7 +5,7 @@
 #include <sys/stat.h>
 
 #define TA 100000		// Tamanho da amostra
-#define NAM 1.		// Número de amostras
+#define NAM 50.		// Número de amostras
 
 typedef struct {
 	double x;
@@ -39,7 +39,7 @@ int main(){
 	char comando[100];
 	sprintf(comando, "python3 analise8.py %s\n", pasta);
 
-    //____________________________ O IMPORTANTE ESTÁ AQUI ____________________________
+    //____________________________ O IMPORTANTE ESTÁ AQUI _________________________________
     
     // Definições para a dinâmica
     double pi = acos(-1.);
@@ -56,7 +56,7 @@ int main(){
     double piREJ[TA] = {0.};
     double piSREJ[TA] = {0.};
     
-    // Vetores que armazenam as posições (pro histograma)
+    // Vetores que armazenam as posições (pro histograma e pro "walk.png")
     vetor trackREJ[TA];
     vetor trackSREJ[TA];
 	
@@ -70,15 +70,17 @@ int main(){
             dy = r1*sin(r2);
             x += dx;
             y += dy;
-            if(x > 1. || x < 0. || y > 1. || y < 0.){
+            if((x > 1.) || (x < 0.) || (y > 1.) || (y < 0.)){
             	x -= dx;
             	y -= dy;
             }
             if((x*x) + (y*y) < 1) n++;
             razao = ((double) n)/(N);           
             piSREJ[N] += razao;
-            trackSREJ[N].x = x;
-            trackSREJ[N].y = y;
+            if(amostras == NAM-1){
+		        trackSREJ[N].x = x;
+		        trackSREJ[N].y = y;
+        	}
         }
         n = 0;
         x = .5;
@@ -100,14 +102,16 @@ int main(){
             dy = r1*sin(r2);
             x += dx;
             y += dy;
-            if(x <= 1. && x >= 0. && y <= 1. && y >= 0.){
+            if((x <= 1.) && (x >= 0.) && (y <= 1.) && (y >= 0.)){
             	if((x*x) + (y*y) < 1){
 				 	n++;
 				    razao = ((double) n)/(N);           
 				    piREJ[N] += razao;
             	}
-			    trackREJ[N].x = x;
-			    trackREJ[N].y = y;            	
+            	if(amostras == NAM-1){
+					trackREJ[N].x = x;
+					trackREJ[N].y = y;            	
+				}
             }else{
             	x -= dx;
             	y -= dy;
@@ -131,7 +135,7 @@ int main(){
 		fprintf(rastreia, "%d\t%lf\t%lf\t%lf\t%lf\n", N, trackREJ[N-1].x, trackREJ[N-1].y, trackSREJ[N-1].x, trackSREJ[N-1].y);
     }
     
-    //__________________________________ O IMPORTANTE TERMINA AQUI _____________________________
+    //__________________________________ O IMPORTANTE TERMINA AQUI ____________________________________
     
     clock_t toc = clock();
 	double time = (double)(toc - tic)/CLOCKS_PER_SEC;

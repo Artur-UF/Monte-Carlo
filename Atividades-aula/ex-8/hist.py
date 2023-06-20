@@ -10,26 +10,20 @@ yrej = list(int(yrej[i]/0.01) for i in range(len(yrej)))
 xsrej = list(int(xsrej[i]/0.01) for i in range(len(xsrej)))
 ysrej = list(int(ysrej[i]/0.01) for i in range(len(ysrej)))
 
-fig = plt.subplots(figsize=(8, 8))
+fig = plt.subplots(figsize=(8, 4))
 
-plt.subplot(221)
+plt.subplot(121)
 plt.hist(xrej, bins=100, range=(0, 100))
 plt.xlim(0, 100)
+plt.ylabel('Frequência')
+plt.xlabel('x/0.01')
 plt.title('Com Rejeição')
 
-plt.subplot(222)
+plt.subplot(122)
 plt.hist(xsrej, bins=100, range=(0, 100))
 plt.xlim(0, 100)
+plt.xlabel('x/0.01')
 plt.title('Sem Rejeição')
-
-plt.subplot(223)
-plt.hist(yrej, bins=100, range=(0, 100))
-plt.xlim(0, 100)
-
-plt.subplot(224)
-plt.hist(ysrej, bins=100, range=(0, 100))
-plt.xlim(0, 100)
-
 
 plt.tight_layout()
 plt.savefig(sys.argv[1]+'/histograma.png', dpi=200)
