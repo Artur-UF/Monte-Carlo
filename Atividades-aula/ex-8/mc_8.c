@@ -5,7 +5,7 @@
 #include <sys/stat.h>
 
 #define TA 100000		// Tamanho da amostra
-#define NAM 50.		// Número de amostras
+#define NAM 21.		// Número de amostras
 
 typedef struct {
 	double x;
@@ -20,7 +20,7 @@ int main(){
     srand(seed1);
     
     // Criação da pasta da simulação e comando de análise
-    char pasta[25], dinamica[50], tracker[50], info[50];
+    char pasta[20], dinamica[50], tracker[50], info[50];
     sprintf(pasta, "TA-%d-NAM-%d", TA, (int) NAM);
     sprintf(dinamica, "%s/dinamica.dat", pasta);
     sprintf(tracker, "%s/tracker.dat", pasta);
@@ -36,8 +36,8 @@ int main(){
 	FILE *rastreia = fopen(tracker, "w");
 	FILE *informa = fopen(info, "w");
 
-	char comando[100];
-	sprintf(comando, "python3 analise8.py %s\n", pasta);
+	char comando[150];
+	sprintf(comando, "python3 analise8.py %s\npython3 hist.py %s\npython3 walk.py %s\n", pasta, pasta, pasta);
 
     //____________________________ O IMPORTANTE ESTÁ AQUI _________________________________
     
@@ -46,7 +46,7 @@ int main(){
     int n = 0;
     int N;
     double r1, r2;    
-    double razao;
+    double estim;
     double dx, x = .5;
     double dy, y = .5;
 	double lambda = .3;
@@ -75,8 +75,8 @@ int main(){
             	y -= dy;
             }
             if((x*x) + (y*y) < 1) n++;
-            razao = ((double) n)/(N);           
-            piSREJ[N] += razao;
+            estim = ((double) n)/((double) N);           
+            piSREJ[N] += estim;
             if(amostras == NAM-1){
 		        trackSREJ[N].x = x;
 		        trackSREJ[N].y = y;
@@ -105,9 +105,9 @@ int main(){
             if((x <= 1.) && (x >= 0.) && (y <= 1.) && (y >= 0.)){
             	if((x*x) + (y*y) < 1){
 				 	n++;
-				    razao = ((double) n)/(N);           
-				    piREJ[N] += razao;
             	}
+			    estim = ((double) n)/((double) N);           
+				piREJ[N] += estim;
             	if(amostras == NAM-1){
 					trackREJ[N].x = x;
 					trackREJ[N].y = y;            	
@@ -150,7 +150,7 @@ int main(){
 	fclose(rastreia);
 	fclose(informa);
 	printf("%s", comando);
-	system(comando);
+	//system(comando);
 
     return 0;
 }

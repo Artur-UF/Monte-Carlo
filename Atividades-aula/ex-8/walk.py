@@ -2,6 +2,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import sys
 
+plt.rcParams.update({"text.usetex" : True, "font.family" : "serif", "font.serif" : ["Computer Modern Serif"], "font.size" : 14})
+
 N, xrej, yrej, xsrej, ysrej = np.loadtxt(sys.argv[1]+'/tracker.dat', unpack=True)
 
 
@@ -22,6 +24,6 @@ plt.ylim(0, 1)
 plt.title('Sem Rejeição')
 
 plt.tight_layout()
-plt.savefig(sys.argv[1]+'/walk.png', dpi=200)
+plt.savefig(sys.argv[1]+'/walk.png', dpi=400)
 
 
