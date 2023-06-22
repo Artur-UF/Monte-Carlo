@@ -47,36 +47,36 @@ int main(){
     int N;
     double r1, r2;    
     double estim;
-    double dx, x = .5;
-    double dy, y = .5;
+    double dx, xaux, x = .5;
+    double dy, yaux, y = .5;
 	double lambda = .3;
 	int amostras;
 
 	// Vetores que armazenam as amostras
-    double piREJ[TA] = {0.};
-    double piSREJ[TA] = {0.};
+    double semREJ[TA] = {0.};
+    double comREJ[TA] = {0.};
     
     // Vetores que armazenam as posições (pro histograma e pro "walk.png")
-    vetor trackREJ[TA];
+    vetor trackCREJ[TA];
     vetor trackSREJ[TA];
 	
 	clock_t tic = clock();
 	// Sem Rejeição
     for(amostras = 0; amostras < NAM; amostras++){
         for(N = 1; N <= TA; ++N){
-            r1 = uniform(0., lambda);
+            r1 = .3; // uniform(0., lambda); // <<<<<<<<<<<<<<<<<<<<<<< TAVA AQUI O ERRO
             r2 = uniform(0., 2*pi);
             dx = r1*cos(r2);
             dy = r1*sin(r2);
-            x += dx;
-            y += dy;
-            if((x > 1.) || (x < 0.) || (y > 1.) || (y < 0.)){
-            	x -= dx;
-            	y -= dy;
+            xaux = x + dx;
+            yaux = y + dy;
+            if((xaux < 1.) && (xaux > 0.) && (yaux < 1.) && (yaux > 0.)){
+            	x = xaux;
+            	y = yaux;
             }
             if((x*x) + (y*y) < 1) n++;
             estim = ((double) n)/((double) N);           
-            piSREJ[N] += estim;
+            semREJ[N] += estim;
             if(amostras == NAM-1){
 		        trackSREJ[N].x = x;
 		        trackSREJ[N].y = y;
@@ -100,23 +100,19 @@ int main(){
             r2 = uniform(0., 2*pi);
             dx = r1*cos(r2);
             dy = r1*sin(r2);
-            x += dx;
-            y += dy;
-            if((x <= 1.) && (x >= 0.) && (y <= 1.) && (y >= 0.)){
-            	if((x*x) + (y*y) < 1){
-				 	n++;
-            	}
+			xaux = x + dx;
+			yaux = y + dy;
+            if((xaux < 1.) && (xaux > 0.) && (yaux < 1.) && (yaux > 0.)){
+            	x = xaux;
+            	y = yaux;
+            	if((x*x) + (y*y) < 1) n++;
 			    estim = ((double) n)/((double) N);           
-				piREJ[N] += estim;
+				comREJ[N] += estim;
             	if(amostras == NAM-1){
-					trackREJ[N].x = x;
-					trackREJ[N].y = y;            	
+					trackCREJ[N].x = x;
+					trackCREJ[N].y = y;            	
 				}
-            }else{
-            	x -= dx;
-            	y -= dy;
-            	N--;
-            }
+            }else N--;
         }
         n = 0;
 		x = .5;
@@ -127,12 +123,12 @@ int main(){
     
     // Escreve os arquivos a serem analisados
     for(N = 1; N <= TA; ++N){
-        fprintf(simula, "%d\t%lf\t%lf\n", N, piREJ[N-1]/NAM, piSREJ[N-1]/NAM);
+        fprintf(simula, "%d\t%lf\t%lf\n", N, comREJ[N-1]/NAM, semREJ[N-1]/NAM);
     }
     
     
     for(N = 1; N <= TA; ++N){
-		fprintf(rastreia, "%d\t%lf\t%lf\t%lf\t%lf\n", N, trackREJ[N-1].x, trackREJ[N-1].y, trackSREJ[N-1].x, trackSREJ[N-1].y);
+		fprintf(rastreia, "%d\t%lf\t%lf\t%lf\t%lf\n", N, trackCREJ[N-1].x, trackCREJ[N-1].y, trackSREJ[N-1].x, trackSREJ[N-1].y);
     }
     
     //__________________________________ O IMPORTANTE TERMINA AQUI ____________________________________

@@ -23,7 +23,8 @@ plt.xlim(0, 1)
 plt.ylim(0, 1)
 plt.title('Sem Rejeição')
 
+plt.suptitle(r'$\lambda$ Aleatório')
 plt.tight_layout()
-plt.savefig(sys.argv[1]+'/walk.png', dpi=400)
+plt.savefig(sys.argv[1]+'/walk-lambdaRAND.png', dpi=400)
 
 

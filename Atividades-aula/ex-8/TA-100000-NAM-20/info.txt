@@ -1,6 +1,0 @@
-seed = 1687300713
-
-#define TA 100000		// Tamanho da amostra
-#define NAM 20.0		// Número de amostras
-
-tempo de execução = 0.490s
