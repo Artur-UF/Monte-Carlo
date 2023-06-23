@@ -6,6 +6,10 @@ plt.rcParams.update({"text.usetex" : True, "font.family" : "serif", "font.serif"
 
 N, xrej, yrej, xsrej, ysrej = np.loadtxt(sys.argv[1]+'/tracker.dat', unpack=True)
 
+args = sys.argv[1].split('-')
+TA = eval(args[1])
+NA = eval(args[3])
+LAMB = args[4]
 
 xrej = list(int(xrej[i]/0.01) for i in range(len(xrej)))
 yrej = list(int(yrej[i]/0.01) for i in range(len(yrej)))
@@ -34,5 +38,5 @@ plt.title('Sem Rejeição')
 
 plt.suptitle(r'$\lambda$ Aleatório')
 plt.tight_layout()
-plt.savefig(sys.argv[1]+'/histograma-lambdaRAND.png', dpi=400)
+plt.savefig(sys.argv[1]+'/histograma-{LAMB}.png', dpi=400)
 

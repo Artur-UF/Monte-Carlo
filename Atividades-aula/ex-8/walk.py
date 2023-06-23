@@ -6,6 +6,10 @@ plt.rcParams.update({"text.usetex" : True, "font.family" : "serif", "font.serif"
 
 N, xrej, yrej, xsrej, ysrej = np.loadtxt(sys.argv[1]+'/tracker.dat', unpack=True)
 
+args = sys.argv[1].split('-')
+TA = eval(args[1])
+NA = eval(args[3])
+LAMB = args[4]
 
 fig = plt.subplots(figsize=(8, 4))
 
@@ -23,8 +27,8 @@ plt.xlim(0, 1)
 plt.ylim(0, 1)
 plt.title('Sem Rejeição')
 
-plt.suptitle(r'$\lambda$ Aleatório')
+#plt.suptitle(r'$\lambda$ Aleatório')
 plt.tight_layout()
-plt.savefig(sys.argv[1]+'/walk-lambdaRAND.png', dpi=400)
+plt.savefig(sys.argv[1]+'/walk-{LAMB}.png', dpi=400)
 
 

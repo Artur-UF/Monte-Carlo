@@ -4,8 +4,9 @@
 #include <math.h>
 #include <sys/stat.h>
 
-#define TA 100000		// Tamanho da amostra
-#define NAM 21.		// Número de amostras
+#define TA 1000000	// Tamanho da amostra
+#define NAM 10.		// Número de amostras
+#define LAMB "RAND"		// Determina se o lambda é aleatório ou não
 
 typedef struct {
 	double x;
@@ -20,25 +21,33 @@ int main(){
     srand(seed1);
     
     // Criação da pasta da simulação e comando de análise
-    char pasta[20], dinamica[50], tracker[50], info[50];
-    sprintf(pasta, "TA-%d-NAM-%d", TA, (int) NAM);
-    sprintf(dinamica, "%s/dinamica.dat", pasta);
+    char pasta[25], dinamicaC[50], dinamicaS[50], tracker[50], info[50];
+    sprintf(pasta, "TA-%d-NAM-%d-%s", TA, (int) NAM, LAMB);
+//    sprintf(dinamicaC, "%s/dinamicaC.dat", pasta);
+//    sprintf(dinamicaS, "%s/dinamicaS.dat", pasta);
+    sprintf(dinamicaC, "%s/dinamicaC.bin", pasta);
+    sprintf(dinamicaS, "%s/dinamicaS.bin", pasta);
     sprintf(tracker, "%s/tracker.dat", pasta);
     sprintf(info, "%s/info.txt", pasta);
 
     if(mkdir(pasta, 0777) == -1){
     	printf("Já existe, vou limpar\n");
-    	remove(dinamica);
+    	remove(dinamicaS);
+    	remove(dinamicaC);
     	remove(tracker);
     	remove(info);
     }
-	FILE *simula = fopen(dinamica, "w");
+	FILE *simulaC = fopen(dinamicaC, "wb");
+	FILE *simulaS = fopen(dinamicaS, "wb");
 	FILE *rastreia = fopen(tracker, "w");
 	FILE *informa = fopen(info, "w");
 
 	char comando[150];
-	sprintf(comando, "python3 analise8.py %s\npython3 hist.py %s\npython3 walk.py %s\n", pasta, pasta, pasta);
-
+	sprintf(comando, "python3 plot.py %s\npython3 hist.py %s\npython3 walk.py %s\n", pasta, pasta, pasta);
+	char transformadorS[150];
+	sprintf(transformadorS, "python3 bintonpy.py %s %s/dinamicaS.npy", dinamicaS, pasta);
+	char transformadorC[150];
+	sprintf(transformadorC, "python3 bintonpy.py %s %s/dinamicaC.npy", dinamicaC, pasta);
     //____________________________ O IMPORTANTE ESTÁ AQUI _________________________________
     
     // Definições para a dinâmica
@@ -52,19 +61,24 @@ int main(){
 	double lambda = .3;
 	int amostras;
 
+	int RAND;
+	if(LAMB == "FIXO") RAND = 0;
+	else RAND = 1; 
+
 	// Vetores que armazenam as amostras
-    double semREJ[TA] = {0.};
-    double comREJ[TA] = {0.};
-    
+    double *semREJ = (double*) malloc(TA*sizeof(double));
+	double *comREJ = (double*) malloc(TA*sizeof(double));
+	    
     // Vetores que armazenam as posições (pro histograma e pro "walk.png")
-    vetor trackCREJ[TA];
-    vetor trackSREJ[TA];
+	vetor *trackCREJ = (vetor*) malloc(TA*sizeof(vetor));
+	vetor *trackSREJ = (vetor*) malloc(TA*sizeof(vetor));
 	
 	clock_t tic = clock();
 	// Sem Rejeição
     for(amostras = 0; amostras < NAM; amostras++){
         for(N = 1; N <= TA; ++N){
-            r1 = .3; // uniform(0., lambda); // <<<<<<<<<<<<<<<<<<<<<<< TAVA AQUI O ERRO
+            if(RAND) r1 = uniform(.0, lambda);
+            else r1 = lambda;
             r2 = uniform(0., 2*pi);
             dx = r1*cos(r2);
             dy = r1*sin(r2);
@@ -76,7 +90,7 @@ int main(){
             }
             if((x*x) + (y*y) < 1) n++;
             estim = ((double) n)/((double) N);           
-            semREJ[N] += estim;
+            semREJ[N] = estim;
             if(amostras == NAM-1){
 		        trackSREJ[N].x = x;
 		        trackSREJ[N].y = y;
@@ -87,6 +101,10 @@ int main(){
         y = .5;
         seed1 += 3;
         srand(seed1);
+		fwrite(semREJ, sizeof(double), TA, simulaS);
+		/*for(N = 1; N <= TA; ++N){
+        	//fprintf(simulaS, "%d\t%lf\n", N, semREJ[N-1]);
+    	}*/
     }
     
     // Com Rejeição
@@ -96,7 +114,8 @@ int main(){
     srand(seed2);
     for(amostras = 0; amostras < NAM; amostras++){
         for(N = 1; N <= TA; ++N){
-            r1 = uniform(0., lambda);
+            if(RAND) r1 = uniform(.0, lambda);
+            else r1 = lambda;
             r2 = uniform(0., 2*pi);
             dx = r1*cos(r2);
             dy = r1*sin(r2);
@@ -107,7 +126,7 @@ int main(){
             	y = yaux;
             	if((x*x) + (y*y) < 1) n++;
 			    estim = ((double) n)/((double) N);           
-				comREJ[N] += estim;
+				comREJ[N] = estim;
             	if(amostras == NAM-1){
 					trackCREJ[N].x = x;
 					trackCREJ[N].y = y;            	
@@ -119,12 +138,16 @@ int main(){
 		y = .5;
         seed2 += 3;
         srand(seed2);
+        fwrite(comREJ, sizeof(double), TA, simulaC);
+        /*for(N = 1; N <= TA; ++N){
+        	fprintf(simulaC, "%d\t%lf\n", N, comREJ[N-1]);
+    	}*/
     }
     
     // Escreve os arquivos a serem analisados
-    for(N = 1; N <= TA; ++N){
+/*    for(N = 1; N <= TA; ++N){
         fprintf(simula, "%d\t%lf\t%lf\n", N, comREJ[N-1]/NAM, semREJ[N-1]/NAM);
-    }
+    }*/
     
     
     for(N = 1; N <= TA; ++N){
@@ -132,7 +155,7 @@ int main(){
     }
     
     //__________________________________ O IMPORTANTE TERMINA AQUI ____________________________________
-    
+    	
     clock_t toc = clock();
 	double time = (double)(toc - tic)/CLOCKS_PER_SEC;
 	
@@ -142,11 +165,16 @@ int main(){
 	fprintf(informa, "tempo de execução = %.3lfs", time);
     
 	// Roda o script de python
-	fclose(simula);
+	fclose(simulaS);
+	fclose(simulaC);
 	fclose(rastreia);
 	fclose(informa);
 	printf("%s", comando);
-	//system(comando);
+	system(transformadorS);
+	system(transformadorC);
+	remove(dinamicaS);
+	remove(dinamicaC);
+	
 
     return 0;
 }
