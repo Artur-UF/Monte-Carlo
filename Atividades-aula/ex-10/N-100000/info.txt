@@ -1,0 +1,4 @@
+seed = 1687877695
+
+#define N 100000	// número de passos
+tempo de execução = 0.075s
