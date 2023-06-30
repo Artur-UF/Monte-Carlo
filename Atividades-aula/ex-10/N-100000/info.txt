@@ -1,4 +1,4 @@
-seed = 1687877695
+seed = 1688062425
 
 #define N 100000	// número de passos
-tempo de execução = 0.075s
+tempo de execução = 0.062s

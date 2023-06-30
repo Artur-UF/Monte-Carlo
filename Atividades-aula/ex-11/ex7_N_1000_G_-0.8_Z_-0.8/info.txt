@@ -1,0 +1,6 @@
+seed = 1688080958
+
+#define N 1000	// número de passos
+#define ZETA -0.8
+#define GAMMA -0.8
+tempo de execução = 0.002s
