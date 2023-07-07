@@ -1,0 +1,6 @@
+seed = 1688690465
+
+#define N 10000     // Número de Passos
+#define AM 50		// Amostras
+#define STEP 10	// A cada quantos passos eu pego para calcular o MSD
+tempo de execução = 0.0274s

@@ -12,6 +12,7 @@ int main(){
 	double uniform(double min, double max);
 	double func(double gamma, double x);
 	int seed = time(NULL);
+	srand(seed);
 	
 	// Criação da pasta da simulação e comando de análise
     char pasta[30], saida1[50], info[50];
