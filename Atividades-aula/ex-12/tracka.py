@@ -22,8 +22,11 @@ plt.grid()
 plt.gca().set_aspect('equal', adjustable='box')
 plt.title('1ª Amostra')
 
+x = range(int(N/4), int(3*N/4))
+
 plt.subplot(122)
 plt.plot(n, msd, c='r', linewidth=.5)
+plt.plot(x, x, c='k', linestyle='--', linewidth=.8)
 plt.xlabel('N')
 plt.ylabel('MSD')
 plt.title('MSD')
