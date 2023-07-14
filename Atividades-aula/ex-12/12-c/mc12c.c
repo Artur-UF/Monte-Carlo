@@ -9,6 +9,7 @@
 #define N (L*L)         // Número de Sítios
 
 int main(){
+    void colisao(int loc);
     double uniform(double min, double max);
     int seed = time(NULL);
     srand(seed);
@@ -28,7 +29,7 @@ int main(){
     FILE *informa = fopen(info, "w");
 
     char comando[50];
-    sprintf(comando, "python3 trackb.py %s\n", pasta);
+    sprintf(comando, "python3 trackc.py %s\n", pasta);
     printf("%s", comando);
     //_____________________GERANDO MATRIZES________________________
     int *sistema = (int *)calloc(N, sizeof(int));
@@ -62,21 +63,27 @@ int main(){
     //__________________________DINÂMICA__________________________
     clock_t tic = clock();
     
-    int auxloc, loc = (int)N/2;
-    int x, y;
+    int auxloc, loc = (int)N/2 + L/2;
+    int x, y, rand, auxrand = -1;
     sistema[loc] = 1;
 
+    fprintf(track, "%d\t%d\n", loc, sistema[loc]);
+    
     for(int p = 0; p < P; ++p){
-        fprintf(track, "%d\n", loc);
         auxloc = loc;
+        rand = (int)uniform(0, 4);
+        while(rand == auxrand){
+            rand = (int)uniform(0, 4);
+        }
+        auxrand = rand;
 
-        switch((int)uniform(0, 4)){
+        switch(rand){
            case 0:
                loc = mtzviz[loc][0];
            break;
            case 1:
                loc = mtzviz[loc][1];
-           break;            
+           break;
            case 2:
                loc = mtzviz[loc][2];
            break;
@@ -84,9 +91,15 @@ int main(){
                loc = mtzviz[loc][3];
            break;
         }
-        sistema[loc] = 1;
-        // AQUI EU ADICIONO A FLAG DE DA MUDANÇA DE PAREDE
+        if(sistema[loc] == 0) sistema[loc] = 1;
+        else{
+            printf("Tamanho = %d\n", p);
+            if(fabs((auxloc%L) - (loc%L)) > 1 || fabs((auxloc/L) - (loc/L)) > 1) fprintf(track, "-1\n");
+            fprintf(track, "%d\t%d\n", loc, sistema[loc]);
+            break;
+        }
         if(fabs((auxloc%L) - (loc%L)) > 1 || fabs((auxloc/L) - (loc/L)) > 1) fprintf(track, "-1\n");
+        fprintf(track, "%d\t%d\n", loc, sistema[loc]);
     }
 
     clock_t toc = clock();
@@ -114,4 +127,8 @@ double uniform(double min, double max) {
     
     return n;
 }
+
+/*void colisao(int loc){
+    if(loc == 1) return break;
+}*/
 

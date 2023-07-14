@@ -7,9 +7,8 @@ args = sys.argv[1].split('-')
 P = eval(args[1])
 L = eval(args[3])
 
-sitio = np.loadtxt(sys.argv[1]+'/track.dat', unpack=True)
+sitio = np.loadtxt(sys.argv[1]+'/track.dat', unpack=True, usecols=0)
 
-# AQUI EU CRIO UMA LISTA QUE VAI TER AS LISTAS COM OS CAMINHOS COMPLETOS
 caminho = list()
 c = list()
 for i in range(len(sitio)):
@@ -18,11 +17,7 @@ for i in range(len(sitio)):
         c = list()
     else: c.append(sitio[i])
 caminho.append(c)
-#--------------------------------------------------
 
-# AQUI EU ITERO SOBRE A LISTA DE CAMINHOS INTEIROS TRANSFORMANDO O NÚMERO DO SÍTIO
-# EM X E Y E PLOTO O CAMINHO INTEIRO, ELE TAMBÉ PLOTA UMA ESTRELA AZUL NO INICIO DO
-# DO CAMINHO E UMA PRETA NO FIM
 for c in range(len(caminho)):
     x = np.asarray(list(s%L for s in caminho[c])) + .5
     y = np.asarray(list((L-1) - (s//L) for s in caminho[c])) + .5
@@ -31,8 +26,6 @@ for c in range(len(caminho)):
         plt.scatter(x[0], y[0], c='b', s=4, marker='*', zorder=3)
     if c == len(caminho)-1:
         plt.scatter(x[-1], y[-1], c='k', s=4, marker='*', zorder=3)
-#--------------------------------------------------------------------------
-plt.vlines((0, L), 0, L)
 plt.xlim(0, L)
 plt.ylim(0, L)
 plt.vlines((0, L), 0, L, 'k')
