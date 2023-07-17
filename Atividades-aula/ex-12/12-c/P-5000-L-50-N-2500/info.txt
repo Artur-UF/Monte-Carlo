@@ -1,4 +1,4 @@
-seed = 1689371529
+seed = 1689383219
 
 #define P 5000         // Número de Passos
 #define L 50            // Aresta do Sistema

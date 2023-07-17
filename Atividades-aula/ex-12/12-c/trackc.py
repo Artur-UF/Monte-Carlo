@@ -21,11 +21,11 @@ caminho.append(c)
 for c in range(len(caminho)):
     x = np.asarray(list(s%L for s in caminho[c])) + .5
     y = np.asarray(list((L-1) - (s//L) for s in caminho[c])) + .5
-    plt.plot(x, y, c='r', linewidth=.4, zorder=2)
+    plt.plot(x, y, c='k', linewidth=.4, zorder=2)
     if c == 0:
         plt.scatter(x[0], y[0], c='b', s=4, marker='*', zorder=3)
     if c == len(caminho)-1:
-        plt.scatter(x[-1], y[-1], c='k', s=4, marker='*', zorder=3)
+        plt.scatter(x[-1], y[-1], c='r', s=4, marker='*', zorder=3)
 plt.xlim(0, L)
 plt.ylim(0, L)
 plt.vlines((0, L), 0, L, 'k')

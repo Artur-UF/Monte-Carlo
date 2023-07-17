@@ -32,7 +32,7 @@ int main(){
     sprintf(comando, "python3 trackc.py %s\n", pasta);
     printf("%s", comando);
     //_____________________GERANDO MATRIZES________________________
-    int *sistema = (int *)calloc(N, sizeof(int));
+    int *v = (int *)calloc(N, sizeof(int));
     int **mtzviz = (int **)malloc(N*sizeof(int*));
     for(int n = 0; n < N; ++n){
         mtzviz[n] = (int *)malloc(4*sizeof(int));
@@ -64,42 +64,42 @@ int main(){
     clock_t tic = clock();
     
     int auxloc, loc = (int)N/2 + L/2;
-    int x, y, rand, auxrand = -1;
-    sistema[loc] = 1;
+    int x, y, nv, rand, auxrand = -1;
+    v[loc] = 1;
 
-    fprintf(track, "%d\t%d\n", loc, sistema[loc]);
+    fprintf(track, "%d\t%d\n", loc, v[loc]);
     
     for(int p = 0; p < P; ++p){
         auxloc = loc;
         rand = (int)uniform(0, 4);
-        while(rand == auxrand){
-            rand = (int)uniform(0, 4);
+        
+        nv = v[mtzviz[loc][0]] + v[mtzviz[loc][1]] + v[mtzviz[loc][2]] + v[mtzviz[loc][3]];
+        if(rand != auxrand && nv < 4){ // TALVEZ ESTEJA AQUI
+            switch(rand){
+               case 0:
+                   loc = mtzviz[loc][0];
+               break;
+               case 1:
+                   loc = mtzviz[loc][1];
+               break;
+               case 2:
+                   loc = mtzviz[loc][2];
+               break;
+               case 3:
+                   loc = mtzviz[loc][3];
+               break;
+            }
         }
-        auxrand = rand;
-
-        switch(rand){
-           case 0:
-               loc = mtzviz[loc][0];
-           break;
-           case 1:
-               loc = mtzviz[loc][1];
-           break;
-           case 2:
-               loc = mtzviz[loc][2];
-           break;
-           case 3:
-               loc = mtzviz[loc][3];
-           break;
-        }
-        if(sistema[loc] == 0) sistema[loc] = 1;
+        
+        if(v[loc] == 0) v[loc] = 1;
         else{
             printf("Tamanho = %d\n", p);
             if(fabs((auxloc%L) - (loc%L)) > 1 || fabs((auxloc/L) - (loc/L)) > 1) fprintf(track, "-1\n");
-            fprintf(track, "%d\t%d\n", loc, sistema[loc]);
+            fprintf(track, "%d\t%d\n", loc, v[loc]);
             break;
         }
         if(fabs((auxloc%L) - (loc%L)) > 1 || fabs((auxloc/L) - (loc/L)) > 1) fprintf(track, "-1\n");
-        fprintf(track, "%d\t%d\n", loc, sistema[loc]);
+        fprintf(track, "%d\t%d\n", loc, v[loc]);
     }
 
     clock_t toc = clock();
@@ -112,7 +112,7 @@ int main(){
     
     fclose(track);
     fclose(informa);
- 
+    system(comando); 
     return 0;
 }
 
