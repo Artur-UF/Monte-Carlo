@@ -3,10 +3,12 @@
 #include <math.h>
 #include <time.h>
 #include <sys/stat.h>
+#include <string.h>
 
-#define P 5000         // Número de Passos
-#define L 50             // Aresta do Sistema
+#define P 1000          // Número de Passos
+#define L 50            // Aresta do Sistema
 #define N (L*L)         // Número de Sítios
+#define AM 100          // Amostras
 
 int main(){
     void colisao(int loc);
@@ -16,7 +18,7 @@ int main(){
 
     // Criação da pasta da simulação e comando de análise
     char pasta[30], saida1[50], info[50];
-    sprintf(pasta, "P-%d-L-%d-N-%d", P, L, N);
+    sprintf(pasta, "P-%d-L-%d-N-%d-AM-%d", P, L, N, AM);
     sprintf(saida1, "%s/track.dat", pasta);
     sprintf(info, "%s/info.txt", pasta);
 
@@ -64,42 +66,46 @@ int main(){
     clock_t tic = clock();
     
     int auxloc, loc = (int)N/2 + L/2;
-    int x, y, nv, rand, auxrand = -1;
+    int nv, rand;
     v[loc] = 1;
 
     fprintf(track, "%d\t%d\n", loc, v[loc]);
-    
-    for(int p = 0; p < P; ++p){
-        auxloc = loc;
-        rand = (int)uniform(0, 4);
-        
-        nv = v[mtzviz[loc][0]] + v[mtzviz[loc][1]] + v[mtzviz[loc][2]] + v[mtzviz[loc][3]];
-        if(rand != auxrand && nv < 4){ // TALVEZ ESTEJA AQUI
-            switch(rand){
-               case 0:
-                   loc = mtzviz[loc][0];
-               break;
-               case 1:
-                   loc = mtzviz[loc][1];
-               break;
-               case 2:
-                   loc = mtzviz[loc][2];
-               break;
-               case 3:
-                   loc = mtzviz[loc][3];
-               break;
-            }
+
+    for(int a = 0; a < AM; ++a){    
+        for(int p = 0; p < P; ++p){
+            auxloc = loc;
+            rand = (int)uniform(0, 4);
+            
+            nv = v[mtzviz[loc][0]] + v[mtzviz[loc][1]] + v[mtzviz[loc][2]] + v[mtzviz[loc][3]];
+            if(nv < 4 && v[mtzviz[loc][rand]] == 0){
+                switch(rand){
+                   case 0:
+                       loc = mtzviz[loc][0];
+                   break;
+                   case 1:
+                       loc = mtzviz[loc][1];
+                   break;
+                   case 2:
+                       loc = mtzviz[loc][2];
+                   break;
+                   case 3:
+                       loc = mtzviz[loc][3];
+                   break;
+                }
+                v[loc] = 1;
+                if(fabs((auxloc%L) - (loc%L)) > 1 || fabs((auxloc/L) - (loc/L)) > 1) fprintf(track, "-1\n");
+                fprintf(track, "%d\n", loc);   
+            }else if(nv == 4){
+                //printf("Tamanho = %d\n", p);
+                break;
+            }else fprintf(track, "%d\n", loc);
         }
-        
-        if(v[loc] == 0) v[loc] = 1;
-        else{
-            printf("Tamanho = %d\n", p);
-            if(fabs((auxloc%L) - (loc%L)) > 1 || fabs((auxloc/L) - (loc/L)) > 1) fprintf(track, "-1\n");
-            fprintf(track, "%d\t%d\n", loc, v[loc]);
-            break;
-        }
-        if(fabs((auxloc%L) - (loc%L)) > 1 || fabs((auxloc/L) - (loc/L)) > 1) fprintf(track, "-1\n");
-        fprintf(track, "%d\t%d\n", loc, v[loc]);
+        memset(v, 0, N*sizeof(int));
+        loc = (int)N/2 + L/2;
+        v[loc] = 1;
+        fprintf(track, "-2\n%d\t%d\n", loc, v[loc]);
+        seed += 3;
+        srand(seed);
     }
 
     clock_t toc = clock();
@@ -112,7 +118,7 @@ int main(){
     
     fclose(track);
     fclose(informa);
-    system(comando); 
+    //system(comando); 
     return 0;
 }
 

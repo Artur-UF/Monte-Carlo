@@ -1,6 +1,6 @@
-seed = 1689383219
+seed = 1689642988
 
-#define P 5000         // Número de Passos
+#define P 1000         // Número de Passos
 #define L 50            // Aresta do Sistema
 #define N 2500         // Número de Sítios
-tempo de execução = 0.0000s
+tempo de execução = 0.0037s
