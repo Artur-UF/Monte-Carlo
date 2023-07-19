@@ -8,37 +8,37 @@ P = eval(args[1])
 L = eval(args[3])
 AM = eval(args[7])
 
-simul = np.loadtxt(sys.argv[1]+'/track.dat', unpack=True, usecols=0)
+def split(array, flag):
+    '''
+    Faz a separação de um array numérico de acordo com uma flag numérica
+    '''
+    arrnd = list()
+    a = list()
+    for i in range(len(array)):
+        if array[i] == flag:
+            arrnd.append(a)
+            a = list()
+        else: a.append(array[i])
+    arrnd.append(a)
+    return arrnd
 
-# SEPARO AS AMOSTRAS
-amostras = list()
-a = list()
-for i in range(len(simul)):
-    if simul[i] == -2:
-        amostras.append(a)
-        a = list()
-    else: a.append(simul[i])
-amostras.append(a)
+simul = np.loadtxt(sys.argv[1]+'/track.dat', unpack=True, usecols=0)
+msd = np.loadtxt(sys.argv[1]+'/msd.dat', unpack=True, usecols=0)
+
+amostras = split(simul, -2)
 
 # PREPARO A MAIOR AMOSTRA PRA PLOTAR
 amplot = max(amostras, key=lambda k: len(k))    # retorna a maior lista dentro da lista amostras
-caminho = list()
-c = list()
-for i in range(len(amplot)):
-    if amplot[i] == -1:
-        caminho.append(c)
-        c = list()
-    else: c.append(amplot[i])
-caminho.append(c)
+caminho = split(amplot, -1)
 
-#fig = plt.subplots(figsize=(8, 4))
-#plt.subplot(121)
+fig = plt.subplots(figsize=(8, 4))
+plt.subplot(121)
 for c in range(len(caminho)):
     x = np.asarray(list(s%L for s in caminho[c])) + .5
     y = np.asarray(list((L-1) - (s//L) for s in caminho[c])) + .5
     plt.plot(x, y, c='k', linewidth=.8, zorder=2)
     if c == 0:
-        plt.scatter(x[0], y[0], c='b', s=4, marker='*', zorder=3)
+        plt.scatter(x[0], y[0], c='g', s=4, marker='*', zorder=3)
     if c == len(caminho)-1:
         plt.scatter(x[-1], y[-1], c='r', s=4, marker='*', zorder=3)
 plt.xlim(0, L)
@@ -49,12 +49,46 @@ plt.gca().set_aspect('equal', adjustable='box')
 plt.axis('off')
 plt.title(f'Maior amostra\n{len(amplot)} passos')
 
+#___________________MSD_________________________
+msds = split(msd, -2)
 
-# MSD (TENHO QUE CONTABILIZAR A CONDIÇÃO DE CONTORNO NO MSD ?????????????????????????????????????????????????????
-'''msds = list()
-m = list()
-for mi in range(len(amostras)):
+media = np.zeros(len(max(msds, key=lambda k: len(k))))
+n = 0
+for i in range(len(max(msds, key=lambda k: len(k)))):
+    for j in range(len(msds)):
+        if i < len(msds[j])-1:
+            media[i] += msds[j][i]
+            n += 1
+    if n > 0: media[i] /= n
+    n = 0
+
+#__________________LOG____________________
 '''
+media = np.log10(media)
+xmed = np.log10(range(len(media)))
+x = np.log10(np.linspace(0, len(media)/2))
+y = np.log10(x**1.5)
+'''
+#_______________NORMAL___________________
+x = np.linspace(0, len(media)/2)
+y = x**1.5
+xmed = range(len(media))
+
+plt.subplot(122)
+for i in range(len(msds)):
+    #xi = np.log10(range(len(msds[i])))
+    #yi = np.log10(msds[i])
+    xi = range(len(msds[i]))
+    yi = msds[i]
+    plt.plot(xi, yi, linewidth=.3)
+plt.plot(xmed, media, c='k', linewidth=1)
+#plt.plot(x, y, c='r', linewidth=1, linestyle='--')
+#plt.xlim(0, np.log10(len(media)))
+plt.xlim(0, len(media))
+plt.ylabel('MSD')
+plt.ylim(0)
+plt.xlabel('N')
+plt.title(f'MSD: {AM} amostras')
 
 plt.tight_layout()
 plt.savefig(sys.argv[1]+'/caminho.png', dpi=400)

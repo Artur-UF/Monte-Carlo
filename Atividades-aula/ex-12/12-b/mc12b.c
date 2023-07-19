@@ -62,7 +62,7 @@ int main(){
     //__________________________DINÂMICA__________________________
     clock_t tic = clock();
     
-    int auxloc, loc = (int)N/2;
+    int auxloc, loc = (int)N/2 + L/2;
     int x, y;
     sistema[loc] = 1;
 

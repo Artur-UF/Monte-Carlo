@@ -17,18 +17,21 @@ int main(){
     srand(seed);
 
     // Criação da pasta da simulação e comando de análise
-    char pasta[30], saida1[50], info[50];
+    char pasta[30], saida1[50], saida2[50], info[50];
     sprintf(pasta, "P-%d-L-%d-N-%d-AM-%d", P, L, N, AM);
     sprintf(saida1, "%s/track.dat", pasta);
+    sprintf(saida2, "%s/msd.dat", pasta);
     sprintf(info, "%s/info.txt", pasta);
 
     if(mkdir(pasta, 0777) == -1){
         printf("Já existe, vou limpar\n");
         remove(saida1);
+        remove(saida2);
         remove(info);
     }
     FILE *track = fopen(saida1, "w");
     FILE *informa = fopen(info, "w");
+    FILE *msd = fopen(saida2, "w");
 
     char comando[50];
     sprintf(comando, "python3 trackc.py %s\n", pasta);
@@ -68,8 +71,11 @@ int main(){
     int auxloc, loc = (int)N/2 + L/2;
     int nv, rand;
     v[loc] = 1;
+    int x = 0;
+    int y = 0;
 
-    fprintf(track, "%d\t%d\n", loc, v[loc]);
+    fprintf(track, "%d\n", loc);
+    fprintf(msd, "%d\n", x*x + y*y);
 
     for(int a = 0; a < AM; ++a){    
         for(int p = 0; p < P; ++p){
@@ -79,31 +85,42 @@ int main(){
             nv = v[mtzviz[loc][0]] + v[mtzviz[loc][1]] + v[mtzviz[loc][2]] + v[mtzviz[loc][3]];
             if(nv < 4 && v[mtzviz[loc][rand]] == 0){
                 switch(rand){
-                   case 0:
-                       loc = mtzviz[loc][0];
-                   break;
-                   case 1:
-                       loc = mtzviz[loc][1];
-                   break;
-                   case 2:
-                       loc = mtzviz[loc][2];
-                   break;
-                   case 3:
-                       loc = mtzviz[loc][3];
-                   break;
+                    case 0:
+                        loc = mtzviz[loc][0];
+                        x++;          
+                    break;
+                    case 1:
+                        loc = mtzviz[loc][1];
+                        y++;
+                    break;
+                    case 2:
+                        loc = mtzviz[loc][2];
+                        x--;
+                    break;
+                    case 3:
+                        loc = mtzviz[loc][3];
+                        y--;
+                    break;
                 }
                 v[loc] = 1;
-                if(fabs((auxloc%L) - (loc%L)) > 1 || fabs((auxloc/L) - (loc/L)) > 1) fprintf(track, "-1\n");
-                fprintf(track, "%d\n", loc);   
+                if(fabs((auxloc%L) - (loc%L)) > 1 || fabs((auxloc/L) - (loc/L)) > 1) fprintf(track, "-1\t-1\n");
+                fprintf(track, "%d\n", loc);
+                fprintf(msd, "%d\n", x*x + y*y);  
             }else if(nv == 4){
                 //printf("Tamanho = %d\n", p);
                 break;
-            }else fprintf(track, "%d\n", loc);
+            }else{
+                fprintf(track, "%d\n", loc);
+                fprintf(msd, "%d\n", x*x + y*y);
+            }
         }
         memset(v, 0, N*sizeof(int));
+        x = 0;
+        y = 0;
         loc = (int)N/2 + L/2;
         v[loc] = 1;
-        fprintf(track, "-2\n%d\t%d\n", loc, v[loc]);
+        fprintf(track, "-2\n%d\n", loc);
+        fprintf(msd, "-2\n%d\n", x*x + y*y);
         seed += 3;
         srand(seed);
     }
@@ -113,11 +130,12 @@ int main(){
 
     // Escreve arquivo de informações sobre a simulação
     fprintf(informa, "seed = %d\n", seed);
-    fprintf(informa, "\n#define P %d         // Número de Passos\n#define L %d            // Aresta do Sistema\n#define N %d         // Número de Sítios\n", P, L, N);
+    fprintf(informa, "\n#define P %d         // Número de Passos\n#define L %d            // Aresta do Sistema\n#define N %d         // Número de Sítios\n#define AM %d          // Amostras\n", P, L, N, AM);
     fprintf(informa, "tempo de execução = %.4lfs", time);
     
     fclose(track);
     fclose(informa);
+    fclose(msd);
     //system(comando); 
     return 0;
 }
@@ -133,8 +151,4 @@ double uniform(double min, double max) {
     
     return n;
 }
-
-/*void colisao(int loc){
-    if(loc == 1) return break;
-}*/
 
