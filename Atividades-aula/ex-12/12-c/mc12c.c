@@ -8,7 +8,7 @@
 #define P 1000          // Número de Passos
 #define L 50            // Aresta do Sistema
 #define N (L*L)         // Número de Sítios
-#define AM 100          // Amostras
+#define AM 10000        // Amostras
 
 int main(){
     void colisao(int loc);

@@ -62,33 +62,24 @@ for i in range(len(max(msds, key=lambda k: len(k)))):
     if n > 0: media[i] /= n
     n = 0
 
-#__________________LOG____________________
-'''
-media = np.log10(media)
-xmed = np.log10(range(len(media)))
-x = np.log10(np.linspace(0, len(media)/2))
-y = np.log10(x**1.5)
-'''
 #_______________NORMAL___________________
-x = np.linspace(0, len(media)/2)
-y = x**1.5
+x = np.linspace(len(media)/6, len(media)/2)
+y = (x/5)**1.5
 xmed = range(len(media))
 
 plt.subplot(122)
-for i in range(len(msds)):
-    #xi = np.log10(range(len(msds[i])))
-    #yi = np.log10(msds[i])
+'''for i in range(len(msds)):
     xi = range(len(msds[i]))
     yi = msds[i]
-    plt.plot(xi, yi, linewidth=.3)
-plt.plot(xmed, media, c='k', linewidth=1)
-#plt.plot(x, y, c='r', linewidth=1, linestyle='--')
-#plt.xlim(0, np.log10(len(media)))
-plt.xlim(0, len(media))
+    plt.plot(xi, yi, linewidth=.3)'''
+plt.plot(xmed[:-1], media[:-1], c='k', linewidth=1, label='MSD')
+plt.plot(x, y, c='r', linewidth=1, linestyle='--', label=r'$t^{3/2}$')
 plt.ylabel('MSD')
-plt.ylim(0)
+plt.xscale('log')
+plt.yscale('log')
 plt.xlabel('N')
 plt.title(f'MSD: {AM} amostras')
+plt.legend()
 
 plt.tight_layout()
 plt.savefig(sys.argv[1]+'/caminho.png', dpi=400)

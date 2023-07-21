@@ -5,7 +5,7 @@
 #include <sys/stat.h>
 
 #define N 10000     // Número de Passos
-#define AM 50		// Amostras
+#define AM 1000		// Amostras
 #define STEP 10	// A cada quantos passos eu pego para calcular o MSD
 
 int main(){
@@ -31,7 +31,7 @@ int main(){
     FILE *informa = fopen(info, "w");
 
     char comando[50];
-    sprintf(comando, "python3 track.py %s\n", pasta);
+    sprintf(comando, "python3 tracka.py %s\n", pasta);
     printf("%s", comando);
     
     //___________________DINAMICA___________________________
