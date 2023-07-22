@@ -6,20 +6,23 @@
 #include <string.h>
 #include <stdbool.h>
 
-#define NP 10.   // Número de p utilizados em cada simulação
+#define NP 50.          // Número de p utilizados em cada simulação
+#define AM 100         // Número de amostras para cara p
 
 int main(){
     int **vizinhos(int l);
     double uniform(double min, double max);
-    int seed = time(NULL);
+    int seed0, seed = time(NULL);
+    seed0 = seed;
     srand(seed);
 
     // Criação da pasta da simulação e comando de análise
-    char pasta[30], saida1[50], saida2[50], saida3[50], info[50];
-    sprintf(pasta, "NP-%.0lf", NP);
+    char pasta[30], saida1[50], saida2[50], saida3[50], saida4[50], info[50];
+    sprintf(pasta, "NP-%.0lf-AM-%d", NP, AM);
     sprintf(saida1, "%s/50.dat", pasta);
     sprintf(saida2, "%s/100.dat", pasta);
     sprintf(saida3, "%s/150.dat", pasta);
+    sprintf(saida4, "%s/estados.dat", pasta);
     sprintf(info, "%s/info.txt", pasta);
 
     if(mkdir(pasta, 0777) == -1){
@@ -27,11 +30,13 @@ int main(){
         remove(saida1);
         remove(saida2);
         remove(saida3);
+        remove(saida4);
         remove(info);
     }
     FILE *rede50 = fopen(saida1, "w");
     FILE *rede100 = fopen(saida2, "w");
     FILE *rede150 = fopen(saida3, "w");
+    FILE *estados = fopen(saida4, "w");
     FILE *informa = fopen(info, "w");
     // Vetor com os files
     FILE *arks[3] = {rede50, rede100, rede150};
@@ -42,72 +47,83 @@ int main(){
 
     clock_t tic = clock();
     
-    int L, N;
+    int L, N, t, ign;
+    double p;
     for(int j = 1; j <= 3; ++j){
         L = 50*j;
-        printf("---L = %d---\n", L);
+        printf("\n-----------------L = %d--------------------\n", L);
         N = L*L;
         //_____________________GERANDO MATRIZES________________________
-        int *s = (int *)calloc(N, sizeof(int));
-        int *f = (int *)calloc(N, sizeof(int));
+        int *s = (int *)malloc(N*sizeof(int));
+        int *f = (int *)malloc(N*sizeof(int));
         int **mtzviz = vizinhos(L);
-
-        for(double p = .3; p < .9; p += (.6/NP)){
-            printf("p = %.2lf\n", p);
-            //_______________________CONDIÇÕES INICIAIS_______________________
-            for(int i = 0; i < N; ++i){
-                (uniform(0, i) < p) ? s[i] = 1 : true ;
-            }
-            
-            for(int i = 0; i < L; ++i){
-                (s[i] == 1) ? f[i] = 1 : true ;
-            }
-
-            //____________________________DINÂMICA_____________________________TEM ALGO ERRADO
-            int t = 0;
-            int ign = 0;
-            
-            do{
-                ign = 0;
+ 
+        for(int k = 0; k < NP; ++k){
+            p = .3 + k*(.6/NP);
+            for(int am = 0; am < AM; ++am){
+                memset(s, 0, N*sizeof(int));
+                memset(f, 0, N*sizeof(int));
+                //_______________________CONDIÇÕES INICIAIS_______________________
                 for(int i = 0; i < N; ++i){
-                    (i%100 == 0) ? printf("sitio(%d)\n", i) : true ;
-                    if(f[i] == 1){
-                        if(s[mtzviz[i][0]] == 1 && f[mtzviz[i][0]] == 0){
-                            f[mtzviz[i][0]] = 1;
-                            ign++;
-                        }
-                        if(s[mtzviz[i][1]] == 1 && f[mtzviz[i][1]] == 0){
-                            f[mtzviz[i][1]] = 1;
-                            ign++;
-                        }
-                        if(s[mtzviz[i][2]] == 1 && f[mtzviz[i][2]] == 0){
-                            f[mtzviz[i][2]] = 1;
-                            ign++;
-                        }
-                        if(s[mtzviz[i][3]] == 1 && f[mtzviz[i][3]] == 0){
-                            f[mtzviz[i][3]] = 1;
-                            ign++;
+                    if(uniform(0, 1) < p) s[i] = 1;
+                }
+                
+                for(int i = 0; i < L; ++i){
+                    if(s[i] == 1) f[i] = 1;
+                }
+                seed += 3;
+                srand(seed);
+                //____________________________DINÂMICA_____________________________
+                do{
+                    if(k == NP/2 && j == 3 && am == 0){
+                        for(int loc = 0; loc < N; ++loc) fprintf(estados, "%d\n", s[loc] + f[loc]);
+                        fprintf(estados, "-1\n");
+                    }
+
+                    ign = 0;
+                    for(int i = 0; i < N; ++i){
+                        if(f[i] == 1){
+                            if(s[mtzviz[i][0]] == 1 && f[mtzviz[i][0]] == 0){
+                                f[mtzviz[i][0]] = 1;
+                                ign++;
+                            }
+                            if(s[mtzviz[i][1]] == 1 && f[mtzviz[i][1]] == 0){
+                                f[mtzviz[i][1]] = 1;
+                                ign++;
+                            }
+                            if(s[mtzviz[i][2]] == 1 && f[mtzviz[i][2]] == 0){
+                                f[mtzviz[i][2]] = 1;
+                                ign++;
+                            }
+                            if(s[mtzviz[i][3]] == 1 && f[mtzviz[i][3]] == 0){
+                                f[mtzviz[i][3]] = 1;
+                                ign++;
+                            }
                         }
                     }
-                }
-                ++t;
-            }while(ign != 0);
-            printf("Terminou um\n");
-            fprintf(arks[j-1], "%d\n", t);
+                    ++t;
+                }while(ign != 0);
+                fprintf(arks[j-1], "%d\n", t);
+                t = 0;
+            }
+            fprintf(arks[j-1], "-1\n");
+            printf("\rrho: %.2lf", p);
+            fflush(stdout);
         }
     }
-
+    printf("\n");
     clock_t toc = clock();
     double time = (double)(toc - tic)/CLOCKS_PER_SEC;
 
     // Escreve arquivo de informações sobre a simulação
-    fprintf(informa, "seed = %d\n", seed);
-    fprintf(informa, "\n#define NP %.0lf   // Número de p utilizados em cada simulação\n", NP);
+    fprintf(informa, "seed = %d\n", seed0);
+    fprintf(informa, "\n#define NP %.0lf   // Número de p utilizados em cada simulação\n#define AM %d         // Número de amostras para cara p\n", NP, AM);
     fprintf(informa, "tempo de execução = %.5lfs", time);
     
     fclose(rede50);
     fclose(rede100);
     fclose(rede150);
+    fclose(estados);
     fclose(informa);
     //system(comando); 
     return 0;
@@ -155,4 +171,5 @@ int **vizinhos(int l){
     
     return mtzviz;
 }
+
 

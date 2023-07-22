@@ -1,4 +1,0 @@
-seed = 1689902728
-
-#define NP 10   // Número de p utilizados em cada simulação
-tempo de execução = 0.05349s
