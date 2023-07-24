@@ -7,7 +7,7 @@
 #include <stdbool.h>
 
 #define NP 50.          // Número de p utilizados em cada simulação
-#define AM 100         // Número de amostras para cara p
+#define AM 10         // Número de amostras para cara p
 
 int main(){
     int **vizinhos(int l);
