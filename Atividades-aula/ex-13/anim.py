@@ -4,14 +4,13 @@ import matplotlib.animation as animation
 import sys
 plt.rcParams.update({"text.usetex" : True, "font.family" : "serif", "font.serif" : ["Computer Modern Serif"], "font.size" : 12})
 
-args = sys.argv[1].split('-')
-NP = eval(args[1])
-AM = eval(args[3])
+args = sys.argv[1].split('/')
+AM = eval(args[0].split('-')[1])
 
-estados = np.loadtxt(sys.argv[1]+'/estados.dat', unpack=True)
+rho = eval(sys.argv[2])
 
-rhos = np.arange(.3, .9, (.6/NP))
-rho = rhos[int(NP/2)]
+estados = np.loadtxt(sys.argv[1], unpack=True)
+
 
 def split(array, flag):
     '''
@@ -30,6 +29,8 @@ def split(array, flag):
 estados = split(estados, -1)
 estados = np.asarray(estados[:-1])
 estados = estados.reshape((len(estados), 150, 150))
+print(f'# de frames: {len(estados)}')
+
 
 def gen():
     global estados, rho
@@ -60,7 +61,7 @@ ani = animation.FuncAnimation(fig, run, gen, interval=10, save_count=1500, blit=
 #writergif = animation.PillowWriter(fps=30)
 #ani.save(path+f'/SH-anim.gif', writer=writergif)
 
-FFwriter = animation.FFMpegWriter(fps=6)
-ani.save(sys.argv[1]+'/anim.mp4', writer=FFwriter, dpi=400)
+FFwriter = animation.FFMpegWriter(fps=10)
+ani.save(args[0]+f'/anim-{rho}-.mp4', writer=FFwriter, dpi=400)
 
 plt.close()

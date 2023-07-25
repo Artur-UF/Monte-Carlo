@@ -6,8 +6,7 @@
 #include <string.h>
 #include <stdbool.h>
 
-#define NP 50.          // Número de p utilizados em cada simulação
-#define AM 10         // Número de amostras para cara p
+#define AM 1000         // Número de amostras para cara p
 
 int main(){
     int **vizinhos(int l);
@@ -17,12 +16,14 @@ int main(){
     srand(seed);
 
     // Criação da pasta da simulação e comando de análise
-    char pasta[30], saida1[50], saida2[50], saida3[50], saida4[50], info[50];
-    sprintf(pasta, "NP-%.0lf-AM-%d", NP, AM);
+    char pasta[30], saida1[50], saida2[50], saida3[50], saida4[50], saida5[50], saida6[50], info[50];
+    sprintf(pasta, "AM-%d", AM);
     sprintf(saida1, "%s/50.dat", pasta);
     sprintf(saida2, "%s/100.dat", pasta);
     sprintf(saida3, "%s/150.dat", pasta);
-    sprintf(saida4, "%s/estados.dat", pasta);
+    sprintf(saida4, "%s/rho-0.6.dat", pasta);
+    sprintf(saida5, "%s/rho-0.5.dat", pasta);
+    sprintf(saida6, "%s/rho-0.7.dat", pasta);
     sprintf(info, "%s/info.txt", pasta);
 
     if(mkdir(pasta, 0777) == -1){
@@ -31,14 +32,18 @@ int main(){
         remove(saida2);
         remove(saida3);
         remove(saida4);
+        remove(saida5);
+        remove(saida6);
         remove(info);
     }
     FILE *rede50 = fopen(saida1, "w");
     FILE *rede100 = fopen(saida2, "w");
     FILE *rede150 = fopen(saida3, "w");
-    FILE *estados = fopen(saida4, "w");
+    FILE *estados06 = fopen(saida4, "w");
+    FILE *estados05 = fopen(saida5, "w");
+    FILE *estados07 = fopen(saida6, "w");
     FILE *informa = fopen(info, "w");
-    // Vetor com os files
+    // Vetor com os FILE
     FILE *arks[3] = {rede50, rede100, rede150};
 
     char comando[50];
@@ -48,8 +53,11 @@ int main(){
     clock_t tic = clock();
     
     int L, N, t, ign;
+    int flag06 = 0;
+    int flag05 = 0;
+    int flag07 = 0;
     double p;
-    for(int j = 1; j <= 3; ++j){
+    for(int j = 1; j <= 3; ++j){//______________LOOP DE ARQUIVOS (REDES)
         L = 50*j;
         printf("\n-----------------L = %d--------------------\n", L);
         N = L*L;
@@ -58,9 +66,9 @@ int main(){
         int *f = (int *)malloc(N*sizeof(int));
         int **mtzviz = vizinhos(L);
  
-        for(int k = 0; k < NP; ++k){
-            p = .3 + k*(.6/NP);
-            for(int am = 0; am < AM; ++am){
+        for(int k = 0; k <= (int)(0.6/0.01)+1; ++k){//________LOOP DE RHO'S
+            p = 0.3 + k*0.01;
+            for(int am = 0; am < AM; ++am){//___________LOOP DE AMOSTRAS
                 memset(s, 0, N*sizeof(int));
                 memset(f, 0, N*sizeof(int));
                 //_______________________CONDIÇÕES INICIAIS_______________________
@@ -74,10 +82,20 @@ int main(){
                 seed += 3;
                 srand(seed);
                 //____________________________DINÂMICA_____________________________
-                do{
-                    if(k == NP/2 && j == 3 && am == 0){
-                        for(int loc = 0; loc < N; ++loc) fprintf(estados, "%d\n", s[loc] + f[loc]);
-                        fprintf(estados, "-1\n");
+                do{ 
+                    if(k == 30 && j == 3 && am == 0){
+                        for(int loc = 0; loc < N; ++loc) fprintf(estados06, "%d\n", s[loc] + f[loc]);
+                        fprintf(estados06, "-1\n");
+                    }
+
+                    if(k == 20 && j == 3 && am == 0){
+                        for(int loc = 0; loc < N; ++loc) fprintf(estados05, "%d\n", s[loc] + f[loc]);
+                        fprintf(estados05, "-1\n");
+                    }
+
+                    if(k == 40 && j == 3 && am == 0){
+                        for(int loc = 0; loc < N; ++loc) fprintf(estados07, "%d\n", s[loc] + f[loc]);
+                        fprintf(estados07, "-1\n");
                     }
 
                     ign = 0;
@@ -105,25 +123,27 @@ int main(){
                 }while(ign != 0);
                 fprintf(arks[j-1], "%d\n", t);
                 t = 0;
-            }
+            }//___________FIM DO LOOP DE AMOSTRAS
             fprintf(arks[j-1], "-1\n");
             printf("\rrho: %.2lf", p);
             fflush(stdout);
-        }
-    }
+        }//__________FIM DO LOOP DE RHO'S
+    }//_______________FIM DO LOOP DE ARQUIVOS (REDES)
     printf("\n");
     clock_t toc = clock();
     double time = (double)(toc - tic)/CLOCKS_PER_SEC;
 
     // Escreve arquivo de informações sobre a simulação
     fprintf(informa, "seed = %d\n", seed0);
-    fprintf(informa, "\n#define NP %.0lf   // Número de p utilizados em cada simulação\n#define AM %d         // Número de amostras para cara p\n", NP, AM);
+    fprintf(informa, "\n#define AM %d         // Número de amostras para cara p\n", AM);
     fprintf(informa, "tempo de execução = %.5lfs", time);
     
     fclose(rede50);
     fclose(rede100);
     fclose(rede150);
-    fclose(estados);
+    fclose(estados06);
+    fclose(estados05);
+    fclose(estados07);
     fclose(informa);
     //system(comando); 
     return 0;

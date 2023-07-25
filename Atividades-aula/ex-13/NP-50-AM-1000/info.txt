@@ -1,5 +1,0 @@
-seed = 1689987858
-
-#define NP 50   // Número de p utilizados em cada simulação
-#define AM 1000         // Número de amostras para cara p
-tempo de execução = 453.18958s

@@ -1,0 +1,4 @@
+seed = 1690300694
+
+#define AM 1000         // Número de amostras para cara p
+tempo de execução = 541.66569s

@@ -4,8 +4,7 @@ import numpy as np
 
 plt.rcParams.update({"text.usetex" : True, "font.family" : "serif", "font.serif" : ["Computer Modern Serif"], "font.size" : 12})
 args = sys.argv[1].split('-')
-NP = eval(args[1])
-AM = eval(args[3])
+AM = eval(args[1])
 
 def split(array, flag):
     '''
@@ -25,7 +24,7 @@ sis1 = np.loadtxt(sys.argv[1]+'/50.dat', unpack=True)
 sis2 = np.loadtxt(sys.argv[1]+'/100.dat', unpack=True)
 sis3 = np.loadtxt(sys.argv[1]+'/150.dat', unpack=True)
 
-rhos = np.arange(.3, .9, (.6/NP))
+rhos = np.arange(.3, .92, 0.01)
 
 sis1 = split(sis1, -1)
 sis1 = list(sum(ts)/AM for ts in sis1)
