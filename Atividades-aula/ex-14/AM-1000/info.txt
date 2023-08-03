@@ -1,0 +1,4 @@
+seed = 1691074289
+
+#define AM 1000         // Número de amostras para cada sistema
+tempo de execução = 0.43009s

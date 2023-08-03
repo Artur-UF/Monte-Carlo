@@ -1,4 +1,0 @@
-seed = 1691021791
-
-#define AM 10000         // Número de amostras para cara p
-tempo de execução = 4.31457s

@@ -16,22 +16,23 @@ fig = plt.subplots(figsize=(8, 4))
 nbins=50
 
 plt.subplot(121)
-plt.hist(e1, histtype='step', label=f'L=5')
-plt.hist(e2, histtype='step', label=f'L=10')
-plt.hist(e3, histtype='step', label=f'L=50')
-plt.hist(e4, histtype='step', label=f'L=100')
+plt.hist(e1, density=True, histtype='step', label=f'L=5')
+plt.hist(e2, density=True, histtype='step', label=f'L=10')
+plt.hist(e3, density=True, histtype='step', label=f'L=50')
+plt.hist(e4, density=True, histtype='step', label=f'L=100')
 plt.legend()
 plt.xlabel('E')
 
 
 plt.subplot(122)
-plt.hist(m1, histtype='step', label=f'L=5')
-plt.hist(m2, histtype='step', label=f'L=10')
-plt.hist(m3, histtype='step', label=f'L=50')
-plt.hist(m4, histtype='step', label=f'L=100')
+plt.hist(m1, density=True, histtype='step', label=f'L=5')
+plt.hist(m2, density=True, histtype='step', label=f'L=10')
+plt.hist(m3, density=True, histtype='step', label=f'L=50')
+plt.hist(m4, density=True, histtype='step', label=f'L=100')
 plt.legend()
 plt.xlabel('m')
 
+plt.suptitle(f'Amostras = {AM}')
 plt.tight_layout()
 plt.savefig(sys.argv[1]+'/hist.png', dpi=400)
 

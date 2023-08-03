@@ -1,0 +1,5 @@
+seed = 1691105477
+
+#define MCSSIZE 100     // Tamanho do passo de Monte Carlo
+#define STEPS 10000      // Número de MCS
+tempo de execução = 0.92675s
