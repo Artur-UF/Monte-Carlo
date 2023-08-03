@@ -50,6 +50,6 @@ plt.grid()
 plt.legend()
 plt.title(f'{AM} amostras')
 
-plt.tight_layout()
-plt.savefig(sys.argv[1]+'/plot.png', dpi=400)
+#plt.tight_layout()
+plt.savefig(sys.argv[1]+'/plot.png', dpi=400, bbox_inches='tight')
 
