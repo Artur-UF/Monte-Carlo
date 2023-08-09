@@ -1,0 +1,32 @@
+***Amostra 1***
+
+Seed = 1691543215
+L = 5
+STEPS = 5000
+RND = 1
+Execution time = 0.0088 s
+-------------------------
+***Amostra 1***
+
+Seed = 1691543218
+L = 10
+STEPS = 5000
+RND = 1
+Execution time = 0.0225 s
+-------------------------
+***Amostra 1***
+
+Seed = 1691543221
+L = 50
+STEPS = 5000
+RND = 1
+Execution time = 0.3989 s
+-------------------------
+***Amostra 1***
+
+Seed = 1691543224
+L = 100
+STEPS = 5000
+RND = 1
+Execution time = 1.5978 s
+-------------------------
