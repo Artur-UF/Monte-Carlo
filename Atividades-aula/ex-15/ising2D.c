@@ -52,7 +52,6 @@ int main(int argc, char *argv[]){
     int **viz = vizinhos(L);
     int *sis = (int*)calloc(N, sizeof(int));
 
-    //____________________________________ aqui ficaria um Loop sobre amostras
     // GERANDO A CONFIGURAÇÃO
     if(RND) for(i = 0; i < N; ++i) sis[i] = (uniform(0., 1.) < .5) ? -1 : 1;
     else for(i = 0; i < N; ++i) sis[i] = 1;
@@ -85,7 +84,6 @@ int main(int argc, char *argv[]){
         }
         fprintf(rede, "%d\t%lf\t%lf\n", t, E/N, magnetizacao(sis, N));
     } //Fim do loop sobre MCSs
-    //________________ aqui acabaria um loop sobre amostras
 
     //_________________________________FIM DA SIMULAÇÃO______________________ 
     

@@ -3,7 +3,7 @@ import sys
 import random
 import time
 
-main = 'mc15.c'
+main = 'ising2D.c'
 pasta = 'resultados-5'
 seed = int(time.time())
 L = 100            # Aresta da rede
@@ -11,13 +11,13 @@ STEPS = 100500     # Número de MCS
 RND = 1           # Condição inicial dos spins
 IMG = 0           # Gravar estados
 CI  = 0            # Gravar condição inicial
-T = [1, 2, 3, 5]              # Temperatura
+T = [2, 3, 5]              # Temperatura
 
 # Cria a pasta que eu dei o nome
 try:
     os.mkdir(pasta)
 except FileExistsError:
-    pass
+    os.system(f'rm -rf {pasta}/*')
 
 info = open(f'{pasta}/info.txt', 'w')
 

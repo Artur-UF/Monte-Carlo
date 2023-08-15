@@ -1,8 +1,8 @@
-***Amostra 1***
+***Amostra***
 
-Seed = 1691627468
+Seed = 1691676231
 L = 100
-STEPS = 100500
-RND = 1
-Execution time = 32.2085 s
+STEPS = 110000
+RND = 0
+Execution time = 0.0000 s
 -------------------------

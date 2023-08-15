@@ -3,7 +3,7 @@ import sys
 import random
 import time
 
-main = 'mc15.c'
+main = 'ising2D.c'
 pasta = 'resultados-3'
 seed = int(time.time())
 L = [50, 100]            # Aresta da rede
@@ -17,7 +17,7 @@ T = 1              # Temperatura
 try:
     os.mkdir(pasta)
 except FileExistsError:
-    pass
+    os.system(f'rm -rf {pasta}/*')
 
 info = open(f'{pasta}/info.txt', 'w')
 
@@ -27,15 +27,15 @@ for l in L:
     for r in RND:
         start = time.time()
         info.write(f'***Amostra 1***\n\n')
-
-        
-        os.system(f'./a.out {pasta} {seed} {l} {STEPS} {r} {IMG} {CI} {T}')
-        seed += 3
-
         info.write(f'Seed = {seed}\n')
         info.write(f'L = {l}\n')
         info.write(f'STEPS = {STEPS}\n')
         info.write(f'RND = {r}\n')
         info.write(f'Execution time = {time.time() - start:.4f} s\n')
+
+        
+        os.system(f'./a.out {pasta} {seed} {l} {STEPS} {r} {IMG} {CI} {T}')
+        seed += 3
+
         info.write('-'*25+'\n')
 info.close()
