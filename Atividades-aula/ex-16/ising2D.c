@@ -124,8 +124,8 @@ int main(int argc, char *argv[]){
         fprintf(medidas, "%d\t%lf\t%lf\t%lf\n", t, E/N, mt, corrtemp(s0, sis, m0, mt, N));
         if((CR > 0) && (ncr < CR)){
             corresp(crr, sis, viz, N, L, mt);
-            for(int l  = 0; l < L/2; ++l) fprintf(cr, "%lf\n", crr[l]);
-            fprintf(cr, "-1\n"); // tu podia usar a seed como separador pra garantir
+            for(int l  = 0; l < L/2; ++l) fprintf(cr, "%d\t%lf\n", l+1, crr[l]);
+            fprintf(cr, "-1\t-1\n"); // tu podia usar a seed como separador pra garantir
             memset(crr, 0, (L/2)*sizeof(double));
             ncr++;
         }

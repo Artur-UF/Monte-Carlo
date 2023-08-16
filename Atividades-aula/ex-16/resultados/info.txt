@@ -1,54 +1,54 @@
 ***Amostra***
 
-Seed = 1692136026
+Seed = 1692148141
 L = 50
 STEPS = 10000
 RND = 1
 T = 1.0
-Execution time = 1.6093 s
+Execution time = 1.6706 s
 -----------------------------------
 ***Amostra***
 
-Seed = 1692136029
+Seed = 1692148144
 L = 50
 STEPS = 10000
 RND = 1
 T = 2.27
-Execution time = 1.5904 s
+Execution time = 1.6591 s
 -----------------------------------
 ***Amostra***
 
-Seed = 1692136032
+Seed = 1692148147
 L = 50
 STEPS = 10000
 RND = 1
 T = 3.0
-Execution time = 1.5800 s
+Execution time = 1.5779 s
 -----------------------------------
 ***Amostra***
 
-Seed = 1692136035
+Seed = 1692148150
 L = 100
 STEPS = 10000
 RND = 1
 T = 1.0
-Execution time = 6.4238 s
+Execution time = 6.5039 s
 -----------------------------------
 ***Amostra***
 
-Seed = 1692136038
+Seed = 1692148153
 L = 100
 STEPS = 10000
 RND = 1
 T = 2.27
-Execution time = 6.3574 s
+Execution time = 6.3773 s
 -----------------------------------
 ***Amostra***
 
-Seed = 1692136041
+Seed = 1692148156
 L = 100
 STEPS = 10000
 RND = 1
 T = 3.0
-Execution time = 6.3395 s
+Execution time = 6.3156 s
 -----------------------------------
