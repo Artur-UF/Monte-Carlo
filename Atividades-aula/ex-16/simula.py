@@ -13,7 +13,7 @@ RND = 1                 # Condição inicial dos spins
 IMG = 0                 # Gravar estados
 CI  = 0                 # Gravar condição inicial
 T = [1., 2.27, 3.]      # Temperatura
-TRANS = 10000           # Final do Transiente 
+TRANS = 5000           # Final do Transiente 
 CR = 10                 # Numero de medidas de Correlação espacial
 
 # Cria a pasta que eu dei o nome
@@ -28,15 +28,19 @@ info = open(f'{pasta}/info.txt', 'w')
 os.system(f'gcc {main} -lm')
 print(f"L   STEPS  RND IMG CI T    TRANS  CR\n")
 for l in L:
-    for t in T:
+    if l == 100: TRANS = 15000
+    for t in T:    
         start = time.time()
         info.write(f'***Amostra***\n\n')
         info.write(f'Seed = {seed}\n')
         info.write(f'L = {l}\n')
         info.write(f'STEPS = {STEPS}\n')
         info.write(f'RND = {RND}\n')
+        info.write(f'IMG = {IMG}\n')
+        info.write(f'CI = {CI}\n')
         info.write(f'T = {t}\n')
-        
+        info.write(f'TRANS = {TRANS}\n')
+        info.write(f'CR = {CR}\n')
         os.system(f'./a.out {pasta} {seed} {l} {STEPS} {RND} {IMG} {CI} {t} {TRANS} {CR}')
         seed += 3
     

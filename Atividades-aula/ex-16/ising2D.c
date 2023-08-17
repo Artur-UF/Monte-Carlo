@@ -1,3 +1,18 @@
+/*
+
+Esse código performa uma simulação de Monte Carlo de acordo com os parâmetros dados ao rodar
+o código compilado nessa seguinte ordem
+
+./a.out pasta seed L STEPS RND IMG CI T TRANS CR
+
+As medidas que podem ser feitas nessa versão são:
+- Densidade de Energia
+- Magnetização
+- Correlação Temporal
+- Coreelação Espacial
+
+ELE NÃO CRIA A PASTA, ELE SÓ RECEBE O NOME DELA E BOTA OS ARQUIVOS LÁ
+*/
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
@@ -5,13 +20,7 @@
 #include <sys/stat.h>
 #include <string.h>
 #include <stdbool.h>
-/*
-#define L 50            // Aresta da rede
-#define STEPS 1000     // Número de MCS
-#define RND 0           // Condição inicial dos spins
-#define IMG 1           // Gravar estados
-#define CI 0            // Gravar condição inicial
-*/
+
 int main(int argc, char *argv[]){
     char pasta[30];
     int seed, L, STEPS, RND, IMG, CI, TRANS, CR;
@@ -54,6 +63,7 @@ int main(int argc, char *argv[]){
     double E, m0 = 0, mt = 0;
     double beta = 1./T;
     N = L*L;
+    int stepcr = (CR == 0) ? STEPS : STEPS/CR;      //Espaçamento entre medidas de C(r) 
 
     // Criando matriz e vetores necessários
     int **viz = vizinhos(L);
@@ -87,13 +97,11 @@ int main(int argc, char *argv[]){
         // se quiser gravar o transiente vc faria aqui
     }
     // Fim do loop transiente
-
     // Definindo s(t=0) e m(t=0)
     if(s == TRANS){
         for(i = 0; i < N; ++i) s0[i] = sis[i];
         m0 = magnetizacao(sis, N);
     }
-
     // Loop sobre o estado estacionário
     t = 0;
     for(s = 0; s < STEPS; ++s){
@@ -122,7 +130,7 @@ int main(int argc, char *argv[]){
         // Medidas
         mt = magnetizacao(sis, N); 
         fprintf(medidas, "%d\t%lf\t%lf\t%lf\n", t, E/N, mt, corrtemp(s0, sis, m0, mt, N));
-        if((CR > 0) && (ncr < CR)){
+        if((CR > 0) && (ncr < CR) && (s%stepcr == 0)){
             corresp(crr, sis, viz, N, L, mt);
             for(int l  = 0; l < L/2; ++l) fprintf(cr, "%d\t%lf\n", l+1, crr[l]);
             fprintf(cr, "-1\t-1\n"); // tu podia usar a seed como separador pra garantir
@@ -232,6 +240,9 @@ void corresp(double *crr, int *s, int **viz, int N, int L, double m){
             crr[l] += c; 
         }
     }
-    for(int l = 0; l < L/2; ++l) crr[l] -= m*m;
+    for(int l = 0; l < L/2; ++l){
+        crr[l] /= N;
+        crr[l] -= m*m;
+    }
 }
 
