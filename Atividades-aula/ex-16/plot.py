@@ -10,7 +10,7 @@ def split(array, flag):
     arrnd = list()
     a = list()
     for i in range(len(array)):
-        if array[i] == flag:
+        if array[i] == flag and type(flag) == int:
             arrnd.append(a)
             a = list()
         else: a.append(array[i])
@@ -29,80 +29,74 @@ def medams(ams):
             med[j] += ams[i][j]
     return med/nam
 
+L = [50, 100]           
+STEPS = 10000            
+RND = 1                 
+IMG = 0                 
+CI  = 0                 
+T = [2.27, 2.3, 2.35, 3.]
+TRANS = [5000, 15000]            
+CR = 10                 
 
-t1, e1, m1, ct1 = np.loadtxt(sys.argv[1]+'/medidas-L-50-T-1.00-STEPS-10000-RND-1-TRANS-5000.dat', unpack=True)
-t2, e2, m2, ct2 = np.loadtxt(sys.argv[1]+'/medidas-L-50-T-2.27-STEPS-10000-RND-1-TRANS-5000.dat', unpack=True)
-t3, e3, m3, ct3 = np.loadtxt(sys.argv[1]+'/medidas-L-50-T-3.00-STEPS-10000-RND-1-TRANS-5000.dat', unpack=True)
-t4, e4, m4, ct4 = np.loadtxt(sys.argv[1]+'/medidas-L-100-T-1.00-STEPS-10000-RND-1-TRANS-15000.dat', unpack=True)
-t5, e5, m5, ct5 = np.loadtxt(sys.argv[1]+'/medidas-L-100-T-2.27-STEPS-10000-RND-1-TRANS-15000.dat', unpack=True)
-t6, e6, m6, ct6 = np.loadtxt(sys.argv[1]+'/medidas-L-100-T-3.00-STEPS-10000-RND-1-TRANS-15000.dat', unpack=True)
+ts = list([] for i in range(8))
+es = list([] for i in range(8))
+ms = list([] for i in range(8))
+cts = list([] for i in range(8))
+rs = list([] for i in range(8))
+crs = list([] for i in range(8))
 
-r1, cr1 = np.loadtxt(sys.argv[1]+'/CR-L-50-T-1.00-STEPS-10000-RND-1-TRANS-5000.dat', unpack=True)
-r2, cr2 = np.loadtxt(sys.argv[1]+'/CR-L-50-T-2.27-STEPS-10000-RND-1-TRANS-5000.dat', unpack=True)
-r3, cr3 = np.loadtxt(sys.argv[1]+'/CR-L-50-T-3.00-STEPS-10000-RND-1-TRANS-5000.dat', unpack=True)
-r4, cr4 = np.loadtxt(sys.argv[1]+'/CR-L-100-T-1.00-STEPS-10000-RND-1-TRANS-15000.dat', unpack=True)
-r5, cr5 = np.loadtxt(sys.argv[1]+'/CR-L-100-T-2.27-STEPS-10000-RND-1-TRANS-15000.dat', unpack=True)
-r6, cr6 = np.loadtxt(sys.argv[1]+'/CR-L-100-T-3.00-STEPS-10000-RND-1-TRANS-15000.dat', unpack=True)
 
-r1 = split(r1,-1)[0]
-r2 = split(r2,-1)[0]
-r3 = split(r3,-1)[0]
-r4 = split(r4,-1)[0]
-r5 = split(r5,-1)[0]
-r6 = split(r6,-1)[0]
+# VERIFICA SE ELE TA GRANDO TUDO CERTO
+for l in range(2):
+    for t in range(4):
+        ts[l+t], es[l+t], ms[l+t], cts[l+t] = np.loadtxt(sys.argv[1]+f'/medidas-L-{L[l]}-T-{T[t]:.2f}-STEPS-10000-RND-1-TRANS-{TRANS[l]}.dat', unpack=True)
 
-cr1 = medams(split(cr1,-1))
-cr2 = medams(split(cr2,-1))
-cr3 = medams(split(cr3,-1))
-cr4 = medams(split(cr4,-1))
-cr5 = medams(split(cr5,-1))
-cr6 = medams(split(cr6,-1))
+for l in range(2):
+    for t in range(4):
+        rs[l+t], crs[l+t] = np.loadtxt(sys.argv[1]+f'/CR-L-{L[l]}-T-{T[t]:.2f}-STEPS-10000-RND-1-TRANS-{TRANS[l]}.dat', unpack=True)
 
-fig = plt.subplots(figsize=(13, 8))
+print(len(ts[6]))
+for i in range(8):
+    ts[i] = split(ts[i],-1)[0]
+    print(f'Foi {i}')
 
-plt.subplot(221)
-plt.plot(t1, ct1, 'r', linewidth=1, zorder=3)
-plt.plot(t2, ct2, 'g', linewidth=1, zorder=2)
-plt.plot(t3, ct3, 'b', linewidth=1, zorder=1)
-plt.xlabel('t(MCS)')
-plt.ylabel('C(t)')
-plt.title(r'$L = 50$')
-plt.grid()
-plt.xscale('log')
+for i in range(8):
+    rs[i] = split(rs[i],-1)[0]
 
-plt.subplot(222)
-plt.plot(t4, ct4, 'r', linewidth=1, zorder=3, label=fr'$T = 1$')
-plt.plot(t5, ct5, 'g', linewidth=1, zorder=2, label=fr'$T = 2.27$')
-plt.plot(t6, ct6, 'b', linewidth=1, zorder=1, label=fr'$T = 3$')
-plt.xlabel('t(MCS)')
-plt.ylabel('C(t)')
-plt.title(r'$L = 100$')
-plt.ylim(-0.07, 0.15)
-plt.grid()
-plt.legend()
-plt.xscale('log')
+for i in range(8):
+    cts[i] = medams(split(cts[i],-1))
 
-plt.subplot(223)
-plt.plot(r1, cr1, 'r', linewidth=1)
-plt.plot(r2, cr2, 'g', linewidth=1)
-plt.plot(r3, cr3, 'b', linewidth=1)
-plt.xlabel('r')
-plt.ylabel('C(r)')
-plt.grid()
-#plt.xscale('log')
-#plt.yscale('log')
+for i in range(8):
+    crs[i] = medams(split(crs[i],-1))
 
-plt.subplot(224)
-plt.plot(r4, cr4, 'r', linewidth=1)
-plt.plot(r5, cr5, 'g', linewidth=1)
-plt.plot(r6, cr6, 'b', linewidth=1)
-plt.xlabel('r')
-plt.ylabel('C(r)')
-plt.grid()
-#plt.xscale('log')
-#plt.yscale('log')
+mosaic = """AABB;.CC."""
 
-plt.tight_layout()
+fig = plt.figure(layout='constrained', figsize=(13, 8))
+axs = fig.subplot_mosaic(mosaic)
+
+for i in range(4):
+    axs['A'].plot(ts[i], cts[i], linewidth=1)
+axs['A'].set(xlabel='t(MCS)', ylabel='C(t)', title=r'$L = 50$', xscale='log') #, ylim=(min(ct2), max(ct2)), xlim=(min(t2), max(t2)))
+axs['A'].grid()
+
+for i in range(4, 8):
+    axs['B'].plot(ts[i], cts[i], linewidth=1, label=f'T = {T[i-4]}')
+axs['B'].set(xlabel='t(MCS)', ylabel='C(t)', title=r'$L = 100$', xscale='log') #, ylim=(min(ct6), max(ct5)), xlim=(min(t5), max(t5)))
+axs['B'].grid()
+axs['B'].legend()
+
+y = lambda r: r**(-1/4)
+r = np.linspace(1, 10)
+
+for i in range(4):
+    axs['C'].plot(rs[i], crs[i], '--', linewidth=1)
+for i in range(4, 8):
+    axs['C'].plot(rs[i], crs[i], linewidth=1)
+axs['C'].plot(r, y(r)/2, 'k', label=r'$r^{-1/4}$')
+axs['C'].set(xlabel='r', ylabel='C(r)', xlim=(1, 10), ylim=(.01, 1), xscale='log', yscale='log')
+axs['C'].grid()
+axs['C'].legend()
+
 #plt.show()
 plt.savefig(sys.argv[1]+'/plot.png', dpi=400)
 

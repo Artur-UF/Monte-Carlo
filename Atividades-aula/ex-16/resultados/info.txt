@@ -1,19 +1,6 @@
-***Amostra***
+***10 Amostra(s)***
 
-Seed = 1692234852
-L = 50
-STEPS = 10000
-RND = 1
-IMG = 0
-CI = 0
-T = 1.0
-TRANS = 5000
-CR = 10
-Execution time = 1.2806 s
------------------------------------
-***Amostra***
-
-Seed = 1692234855
+Seed = 1692317431
 L = 50
 STEPS = 10000
 RND = 1
@@ -22,11 +9,37 @@ CI = 0
 T = 2.27
 TRANS = 5000
 CR = 10
-Execution time = 1.2510 s
+Execution time = 12.3864 s
 -----------------------------------
-***Amostra***
+***10 Amostra(s)***
 
-Seed = 1692234858
+Seed = 1692317461
+L = 50
+STEPS = 10000
+RND = 1
+IMG = 0
+CI = 0
+T = 2.3
+TRANS = 5000
+CR = 10
+Execution time = 12.3546 s
+-----------------------------------
+***10 Amostra(s)***
+
+Seed = 1692317491
+L = 50
+STEPS = 10000
+RND = 1
+IMG = 0
+CI = 0
+T = 2.35
+TRANS = 5000
+CR = 10
+Execution time = 12.2953 s
+-----------------------------------
+***10 Amostra(s)***
+
+Seed = 1692317521
 L = 50
 STEPS = 10000
 RND = 1
@@ -35,24 +48,11 @@ CI = 0
 T = 3.0
 TRANS = 5000
 CR = 10
-Execution time = 1.2241 s
+Execution time = 12.3270 s
 -----------------------------------
-***Amostra***
+***10 Amostra(s)***
 
-Seed = 1692234861
-L = 100
-STEPS = 10000
-RND = 1
-IMG = 0
-CI = 0
-T = 1.0
-TRANS = 15000
-CR = 10
-Execution time = 7.8771 s
------------------------------------
-***Amostra***
-
-Seed = 1692234864
+Seed = 1692317551
 L = 100
 STEPS = 10000
 RND = 1
@@ -61,11 +61,37 @@ CI = 0
 T = 2.27
 TRANS = 15000
 CR = 10
-Execution time = 7.7926 s
+Execution time = 81.2415 s
 -----------------------------------
-***Amostra***
+***10 Amostra(s)***
 
-Seed = 1692234867
+Seed = 1692317581
+L = 100
+STEPS = 10000
+RND = 1
+IMG = 0
+CI = 0
+T = 2.3
+TRANS = 15000
+CR = 10
+Execution time = 80.7041 s
+-----------------------------------
+***10 Amostra(s)***
+
+Seed = 1692317611
+L = 100
+STEPS = 10000
+RND = 1
+IMG = 0
+CI = 0
+T = 2.35
+TRANS = 15000
+CR = 10
+Execution time = 78.1914 s
+-----------------------------------
+***10 Amostra(s)***
+
+Seed = 1692317641
 L = 100
 STEPS = 10000
 RND = 1
@@ -74,5 +100,5 @@ CI = 0
 T = 3.0
 TRANS = 15000
 CR = 10
-Execution time = 7.7904 s
+Execution time = 84.0946 s
 -----------------------------------
