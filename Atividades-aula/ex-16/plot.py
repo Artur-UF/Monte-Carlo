@@ -46,19 +46,19 @@ rs = list([] for i in range(8))
 crs = list([] for i in range(8))
 
 
-# VERIFICA SE ELE TA GRANDO TUDO CERTO
+f = 0
 for l in range(2):
     for t in range(4):
-        ts[l+t], es[l+t], ms[l+t], cts[l+t] = np.loadtxt(sys.argv[1]+f'/medidas-L-{L[l]}-T-{T[t]:.2f}-STEPS-10000-RND-1-TRANS-{TRANS[l]}.dat', unpack=True)
-
+        ts[f], es[f], ms[f], cts[f] = np.loadtxt(sys.argv[1]+f'/medidas-L-{L[l]}-T-{T[t]:.2f}-STEPS-10000-RND-1-TRANS-{TRANS[l]}.dat', unpack=True)
+        f += 1
+f = 0
 for l in range(2):
     for t in range(4):
-        rs[l+t], crs[l+t] = np.loadtxt(sys.argv[1]+f'/CR-L-{L[l]}-T-{T[t]:.2f}-STEPS-10000-RND-1-TRANS-{TRANS[l]}.dat', unpack=True)
+        rs[f], crs[f] = np.loadtxt(sys.argv[1]+f'/CR-L-{L[l]}-T-{T[t]:.2f}-STEPS-10000-RND-1-TRANS-{TRANS[l]}.dat', unpack=True)
+        f += 1
 
-print(len(ts[6]))
 for i in range(8):
     ts[i] = split(ts[i],-1)[0]
-    print(f'Foi {i}')
 
 for i in range(8):
     rs[i] = split(rs[i],-1)[0]
@@ -74,14 +74,22 @@ mosaic = """AABB;.CC."""
 fig = plt.figure(layout='constrained', figsize=(13, 8))
 axs = fig.subplot_mosaic(mosaic)
 
+cores = ['r', 'g', 'b', 'purple']
+
+y = lambda r: r**(-1/4)
+r = np.linspace(1, 100)
+escala = 1.5
+
 for i in range(4):
-    axs['A'].plot(ts[i], cts[i], linewidth=1)
-axs['A'].set(xlabel='t(MCS)', ylabel='C(t)', title=r'$L = 50$', xscale='log') #, ylim=(min(ct2), max(ct2)), xlim=(min(t2), max(t2)))
+    axs['A'].plot(ts[i], cts[i], cores[i], linewidth=1)
+axs['A'].set(xlabel='t(MCS)', ylabel='C(t)', title=r'$L = 50$', xscale='log', yscale='log', xlim=(1, 100), ylim=(0.01, 1))
+axs['A'].plot(r, y(r)/escala, 'k', label=r'$r^{-1/4}$')
 axs['A'].grid()
 
 for i in range(4, 8):
-    axs['B'].plot(ts[i], cts[i], linewidth=1, label=f'T = {T[i-4]}')
-axs['B'].set(xlabel='t(MCS)', ylabel='C(t)', title=r'$L = 100$', xscale='log') #, ylim=(min(ct6), max(ct5)), xlim=(min(t5), max(t5)))
+    axs['B'].plot(ts[i], cts[i], cores[i-4], linewidth=1, label=f'T = {T[i-4]}')
+axs['B'].set(xlabel='t(MCS)', ylabel='C(t)', title=r'$L = 100$', xscale='log', yscale='log', xlim=(1, 100), ylim=(0.01, 1))
+axs['B'].plot(r, y(r)/escala, 'k', label=r'$r^{-1/4}$')
 axs['B'].grid()
 axs['B'].legend()
 
@@ -89,15 +97,16 @@ y = lambda r: r**(-1/4)
 r = np.linspace(1, 10)
 
 for i in range(4):
-    axs['C'].plot(rs[i], crs[i], '--', linewidth=1)
+    axs['C'].plot(rs[i], crs[i], color=cores[i], linestyle='--', linewidth=1)
 for i in range(4, 8):
-    axs['C'].plot(rs[i], crs[i], linewidth=1)
-axs['C'].plot(r, y(r)/2, 'k', label=r'$r^{-1/4}$')
+    axs['C'].plot(rs[i], crs[i], cores[i-4], linewidth=1)
+#axs['C'].plot([], [], label='-- L = 50\n| L=100')
+axs['C'].plot(r, y(r), 'k', label=r'$r^{-1/4}$')
 axs['C'].set(xlabel='r', ylabel='C(r)', xlim=(1, 10), ylim=(.01, 1), xscale='log', yscale='log')
 axs['C'].grid()
-axs['C'].legend()
+axs['C'].legend(title='- - L=50\n --- L=100')
 
 #plt.show()
-plt.savefig(sys.argv[1]+'/plot.png', dpi=400)
+plt.savefig(sys.argv[1]+'/plot-logCt.png', dpi=400)
 
 

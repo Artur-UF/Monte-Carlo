@@ -1,6 +1,6 @@
 /*
 
-Esse código performa uma simulação de Monte Carlo de acordo com os parâmetros dados ao rodar
+Esse código performa uma simulação do Modelo de Ising-2D de acordo com os parâmetros dados ao rodar
 o código compilado nessa seguinte ordem
 
 ./a.out pasta seed L STEPS RND IMG CI T TRANS CR
@@ -9,7 +9,7 @@ As medidas que podem ser feitas nessa versão são:
 - Densidade de Energia
 - Magnetização
 - Correlação Temporal
-- Coreelação Espacial
+- Correlação Espacial
 
 ELE NÃO CRIA A PASTA, ELE SÓ RECEBE O NOME DELA E BOTA OS ARQUIVOS LÁ
 */
@@ -22,8 +22,8 @@ ELE NÃO CRIA A PASTA, ELE SÓ RECEBE O NOME DELA E BOTA OS ARQUIVOS LÁ
 #include <stdbool.h>
 
 int main(int argc, char *argv[]){
-    char pasta[30], arkcf[30];
-    int seed, L, STEPS, RND, IMG, CI, TRANS, CR, CF;
+    char pasta[30];
+    int seed, L, STEPS, RND, IMG, CI, TRANS, CR;
     double T;
     sprintf(pasta, "%s", argv[1]);              // Nome da pasta
     sscanf(argv[2], "%d", &seed);               // Seed
@@ -34,10 +34,8 @@ int main(int argc, char *argv[]){
     sscanf(argv[7], "%d", &CI);                 // Gravar condição inicial
     sscanf(argv[8], "%lf", &T);                 // Temperatura
     sscanf(argv[9], "%d", &TRANS);              // Final do transiente (numero de MCS que eu jogo fora)
-    sscanf(argv[10], "%d", &CR);                // Número de medidas de Correlação Especial
-    sscanf(argv[11], "%d", &CF);                // Configuração final: 0 = não usa | 1 = usa | 2 = grava
-    if(CF == 1) sprintf(arkcf, "%s/%s", pasta, argv[12]);   // Path do arquivo onde acabou
-
+    sscanf(argv[10], "%d", &CR);                // Número de medidas de Correlação Espacial:CR = -1 não exclui anteriores |CR = 0 não salva |CR > 0 salva CR medidas 
+ 
     int **vizinhos(int l);
     int energia(int *sis, int **viz, int n, int j);
     double magnetizacao(int *sis, int n);
@@ -53,11 +51,10 @@ int main(int argc, char *argv[]){
     sprintf(saida3, "%s/ci-L-%d-T-%.2lf-STEPS-%d-RND-%d-TRANS-%d.dat", pasta, L, T, STEPS, RND, TRANS);
     sprintf(saida4, "%s/CR-L-%d-T-%.2lf-STEPS-%d-RND-%d-TRANS-%d.dat", pasta, L, T, STEPS, RND, TRANS);
 
-    FILE *medidas = fopen(saida1, "w");
+    FILE *medidas = fopen(saida1, "a");
     FILE *img = fopen(saida2, "w");
     FILE *ci = fopen(saida3, "w");
-    FILE *cr = fopen(saida4, "w");
-    FILE *cf = fopne(arkcf, "wb")    
+    FILE *cr = fopen(saida4, "a"); // FAZ ALGO PRA MANTER O CR
 
     //__________________________________SIMULAÇÃO______________________________________________________________
 
@@ -66,7 +63,7 @@ int main(int argc, char *argv[]){
     double E, m0 = 0, mt = 0;
     double beta = 1./T;
     N = L*L;
-    int stepcr = (CR == 0) ? STEPS : STEPS/CR;      //Espaçamento entre medidas de C(r) 
+    int stepcr = (CR <= 0) ? STEPS : STEPS/CR;      //Espaçamento entre medidas de C(r) 
 
     // Criando matriz e vetores necessários
     int **viz = vizinhos(L);
@@ -131,7 +128,7 @@ int main(int argc, char *argv[]){
             fprintf(img, "-2\n");
         }
         // Medidas
-        mt = magnetizacao(sis, N); 
+        mt = magnetizacao(sis, N);
         fprintf(medidas, "%d\t%lf\t%lf\t%lf\n", t, E/N, mt, corrtemp(s0, sis, m0, mt, N));
         if((CR > 0) && (ncr < CR) && (s%stepcr == 0)){
             corresp(crr, sis, viz, N, L, mt);
@@ -143,10 +140,12 @@ int main(int argc, char *argv[]){
     }
 
     //_________________________________FIM DA SIMULAÇÃO_____________________________________________ 
-    
+    fprintf(medidas, "-1\t-1\t-1\t-1\n"); 
+
     fclose(medidas);
     fclose(img);
     fclose(ci);
+    fclose(cr);
     if(!IMG) remove(saida2);
     if(!CI) remove(saida3);
     if(CR == 0) remove(saida4);
@@ -244,8 +243,8 @@ void corresp(double *crr, int *s, int **viz, int N, int L, double m){
         }
     }
     for(int l = 0; l < L/2; ++l){
-        crr[l] /= N;
-        crr[l] -= m*m;
+        crr[l] /= 2*N;
+        //crr[l] -= m*m;
     }
 }
 

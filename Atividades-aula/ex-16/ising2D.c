@@ -1,6 +1,6 @@
 /*
 
-Esse código performa uma simulação de Monte Carlo de acordo com os parâmetros dados ao rodar
+Esse código performa uma simulação do Modelo de Ising-2D de acordo com os parâmetros dados ao rodar
 o código compilado nessa seguinte ordem
 
 ./a.out pasta seed L STEPS RND IMG CI T TRANS CR
@@ -9,7 +9,7 @@ As medidas que podem ser feitas nessa versão são:
 - Densidade de Energia
 - Magnetização
 - Correlação Temporal
-- Coreelação Espacial
+- Correlação Espacial
 
 ELE NÃO CRIA A PASTA, ELE SÓ RECEBE O NOME DELA E BOTA OS ARQUIVOS LÁ
 */
@@ -34,7 +34,7 @@ int main(int argc, char *argv[]){
     sscanf(argv[7], "%d", &CI);                 // Gravar condição inicial
     sscanf(argv[8], "%lf", &T);                 // Temperatura
     sscanf(argv[9], "%d", &TRANS);              // Final do transiente (numero de MCS que eu jogo fora)
-    sscanf(argv[10], "%d", &CR);                // Número de medidas de Correlação Especial:CR = -1 não exclui anteriores |CR = 0 não salva |CR > 0 salva CR medidas 
+    sscanf(argv[10], "%d", &CR);                // Número de medidas de Correlação Espacial:CR = -1 não exclui anteriores |CR = 0 não salva |CR > 0 salva CR medidas 
  
     int **vizinhos(int l);
     int energia(int *sis, int **viz, int n, int j);
