@@ -1,4 +1,3 @@
-# PQ NÃO TA ESCREVENDO UNS CR????? TA CERTO O CR???
 import os
 import sys
 import random

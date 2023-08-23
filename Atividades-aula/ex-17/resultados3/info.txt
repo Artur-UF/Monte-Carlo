@@ -1,0 +1,56 @@
+***1 Amostra(s)***
+
+Seed = 1692748990
+L = 25
+STEPS = 1000
+RND = 0
+IMG = 0
+CI = 0
+TI = 2.0
+TF = 4.0
+TRANS = 1000
+CR = 0
+Execution time = 0.8599 s
+-----------------------------------
+***1 Amostra(s)***
+
+Seed = 1692748993
+L = 50
+STEPS = 1000
+RND = 0
+IMG = 0
+CI = 0
+TI = 2.0
+TF = 4.0
+TRANS = 1000
+CR = 0
+Execution time = 3.3637 s
+-----------------------------------
+***1 Amostra(s)***
+
+Seed = 1692748996
+L = 75
+STEPS = 1000
+RND = 0
+IMG = 0
+CI = 0
+TI = 2.0
+TF = 4.0
+TRANS = 1000
+CR = 0
+Execution time = 7.5534 s
+-----------------------------------
+***1 Amostra(s)***
+
+Seed = 1692748999
+L = 100
+STEPS = 1000
+RND = 0
+IMG = 0
+CI = 0
+TI = 2.0
+TF = 4.0
+TRANS = 1000
+CR = 0
+Execution time = 13.4174 s
+-----------------------------------

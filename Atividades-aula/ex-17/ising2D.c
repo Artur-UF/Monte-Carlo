@@ -24,17 +24,18 @@ ELE NÃO CRIA A PASTA, ELE SÓ RECEBE O NOME DELA E BOTA OS ARQUIVOS LÁ
 int main(int argc, char *argv[]){
     char pasta[30];
     int seed, L, STEPS, RND, IMG, CI, TRANS, CR;
-    double T;
+    double TI, TF;
     sprintf(pasta, "%s", argv[1]);              // Nome da pasta
-    sscanf(argv[2], "%d", &seed);               // Seed
-    sscanf(argv[3], "%d", &L);                  // Aresta do sistema
-    sscanf(argv[4], "%d", &STEPS);              // Número de MCS
-    sscanf(argv[5], "%d", &RND);                // Condição inicial de Spins (aleatório ou não)
-    sscanf(argv[6], "%d", &IMG);                // Gravar sistemas para Gif
-    sscanf(argv[7], "%d", &CI);                 // Gravar condição inicial
-    sscanf(argv[8], "%lf", &T);                 // Temperatura
-    sscanf(argv[9], "%d", &TRANS);              // Final do transiente (numero de MCS que eu jogo fora)
-    sscanf(argv[10], "%d", &CR);                // Número de medidas de Correlação Espacial:CR = -1 não exclui anteriores |CR = 0 não salva |CR > 0 salva CR medidas 
+    sscanf(argv[2],  "%d", &seed);               // Seed
+    sscanf(argv[3],  "%d", &L);                  // Aresta do sistema
+    sscanf(argv[4],  "%d", &STEPS);              // Número de MCS (por temperatura)
+    sscanf(argv[5],  "%d", &RND);                // Condição inicial de Spins (aleatório ou não)
+    sscanf(argv[6],  "%d", &IMG);                // Gravar sistemas para Gif
+    sscanf(argv[7],  "%d", &CI);                 // Gravar condição inicial
+    sscanf(argv[8], "%lf", &TI);                 // Temperatura Inicial
+    sscanf(argv[9], "%lf", &TF);                 // Temperatura Final
+    sscanf(argv[10], "%d", &TRANS);              // Final do transiente (numero de MCS que eu jogo fora)
+    sscanf(argv[11], "%d", &CR);                // Número de medidas de Correlação Espacial:CR = -1 não exclui anteriores |CR = 0 não salva |CR > 0 salva CR medidas 
  
     int **vizinhos(int l);
     int energia(int *sis, int **viz, int n, int j);
@@ -46,10 +47,10 @@ int main(int argc, char *argv[]){
 
     // Criação da pasta da simulação e comando de análise
     char saida1[100], saida2[100], saida3[100], saida4[100];
-    sprintf(saida1, "%s/medidas-L-%d-T-%.2lf-STEPS-%d-RND-%d-TRANS-%d.dat", pasta, L, T, STEPS, RND, TRANS);
-    sprintf(saida2, "%s/im-L-%d-T-%.2lf-STEPS-%d-RND-%d-TRANS-%d.dat", pasta, L, T, STEPS, RND, TRANS);
-    sprintf(saida3, "%s/ci-L-%d-T-%.2lf-STEPS-%d-RND-%d-TRANS-%d.dat", pasta, L, T, STEPS, RND, TRANS);
-    sprintf(saida4, "%s/CR-L-%d-T-%.2lf-STEPS-%d-RND-%d-TRANS-%d.dat", pasta, L, T, STEPS, RND, TRANS);
+    sprintf(saida1, "%s/medidas-L-%d-TI-%.2lf-TF-%.2lf-STEPS-%d-RND-%d-TRANS-%d.dat", pasta, L, TI, TF, STEPS, RND, TRANS);
+    sprintf(saida2,      "%s/im-L-%d-TI-%.2lf-TF-%.2lf-STEPS-%d-RND-%d-TRANS-%d.dat", pasta, L, TI, TF, STEPS, RND, TRANS);
+    sprintf(saida3,      "%s/ci-L-%d-TI-%.2lf-TF-%.2lf-STEPS-%d-RND-%d-TRANS-%d.dat", pasta, L, TI, TF, STEPS, RND, TRANS);
+    sprintf(saida4,      "%s/CR-L-%d-TI-%.2lf-TF-%.2lf-STEPS-%d-RND-%d-TRANS-%d.dat", pasta, L, TI, TF, STEPS, RND, TRANS);
 
     FILE *medidas = fopen(saida1, "a");
     FILE *img = fopen(saida2, "w");
@@ -61,9 +62,19 @@ int main(int argc, char *argv[]){
     int i, j, s, t, dE, N, ncr = 0; 
     int J = 1;
     double E, m0 = 0, mt = 0;
-    double beta = 1./T;
     N = L*L;
     int stepcr = (CR <= 0) ? STEPS : STEPS/CR;      //Espaçamento entre medidas de C(r) 
+
+    // Definição de temperatura(s)
+    double dT = .1;                     // delta de Temperatura
+    int nT;
+    if(TI == TF) nT = 1;
+    else nT = (int)((TF-TI)/dT);
+    double T[nT];
+    T[0] = TI;
+    if(nT > 1) for(int t = 1; t <= nT; ++t) T[t] = T[t-1] + dT;
+
+    double beta = 1./T[0];
 
     // Criando matriz e vetores necessários
     int **viz = vizinhos(L);
@@ -104,41 +115,68 @@ int main(int argc, char *argv[]){
     }
     // Loop sobre o estado estacionário
     t = 0;
-    for(s = 0; s < STEPS; ++s){
-        //MCS
-        for(j = 0; j < N; ++j){
-            dE = 2*J*sis[j]*(sis[viz[j][0]] + sis[viz[j][1]] + sis[viz[j][2]] + sis[viz[j][3]]);
-            if(dE > 0){
-                if(uniform(0., 1.) < exp(-beta*dE)){
+    for(int temp = 0; temp <= nT; ++temp){      // Loop de temperaturas
+        for(s = 0; s < STEPS; ++s){             // Roda STEPS de MCS
+            //MCS
+            for(j = 0; j < N; ++j){
+                dE = 2*J*sis[j]*(sis[viz[j][0]] + sis[viz[j][1]] + sis[viz[j][2]] + sis[viz[j][3]]);
+                if(dE > 0){
+                    if(uniform(0., 1.) < exp(-beta*dE)){
+                        sis[j] *= -1;
+                        E += dE;
+                    }
+                }
+                else{
                     sis[j] *= -1;
                     E += dE;
                 }
             }
-            else{
-                sis[j] *= -1;
-                E += dE;
+            t++;
+            //Fim do MCS
+    
+            // Imagens para fazer o gif
+            if(IMG){
+                for(i = 0; i < N; ++i) fprintf(img, "%d\n", sis[i]);
+                fprintf(img, "-2\n");
+            }
+            // Medidas
+            mt = magnetizacao(sis, N);
+            fprintf(medidas, "%d\t%lf\t%lf\t%lf\n", t, E/N, mt, corrtemp(s0, sis, m0, mt, N));
+            if((CR > 0) && (ncr < CR) && (s%stepcr == 0)){
+                corresp(crr, sis, viz, N, L, mt);
+                for(int l  = 0; l < L/2; ++l) fprintf(cr, "%d\t%lf\n", l+1, crr[l]);
+                fprintf(cr, "-1\t-1\n"); // tu podia usar a seed como separador pra garantir
+                memset(crr, 0, (L/2)*sizeof(double));
+                ncr++;
             }
         }
-        t++;
-        //Fim do MCS
-
-        // Imagens para fazer o gif
-        if(IMG){
-            for(i = 0; i < N; ++i) fprintf(img, "%d\n", sis[i]);
-            fprintf(img, "-2\n");
+        beta = 1./T[temp];
+        // Loop para passar pelo transiente
+        E = (double) energia(sis, viz, N, 1);
+        for(s = 0; s < TRANS; ++s){ //Loop sobre passos de Monte Carlo
+            //MCS
+            for(j = 0; j < N; ++j){
+                dE = 2*J*sis[j]*(sis[viz[j][0]] + sis[viz[j][1]] + sis[viz[j][2]] + sis[viz[j][3]]);
+                if(dE > 0){
+                    if(uniform(0., 1.) < exp(-beta*dE)){
+                        sis[j] *= -1;
+                        E += dE;
+                    }
+                }
+                else{
+                    sis[j] *= -1;
+                    E += dE;
+                }
+            }
+            // se quiser gravar o transiente vc faria aqui
         }
-        // Medidas
-        mt = magnetizacao(sis, N);
-        fprintf(medidas, "%d\t%lf\t%lf\t%lf\n", t, E/N, mt, corrtemp(s0, sis, m0, mt, N));
-        if((CR > 0) && (ncr < CR) && (s%stepcr == 0)){
-            corresp(crr, sis, viz, N, L, mt);
-            for(int l  = 0; l < L/2; ++l) fprintf(cr, "%d\t%lf\n", l+1, crr[l]);
-            fprintf(cr, "-1\t-1\n"); // tu podia usar a seed como separador pra garantir
-            memset(crr, 0, (L/2)*sizeof(double));
-            ncr++;
+        // Fim do loop transiente
+        // Definindo s(t=0) e m(t=0)
+        if(s == TRANS){
+            for(i = 0; i < N; ++i) s0[i] = sis[i];
+            m0 = magnetizacao(sis, N);
         }
     }
-
     //_________________________________FIM DA SIMULAÇÃO_____________________________________________ 
     fprintf(medidas, "-1\t-1\t-1\t-1\n"); 
 
