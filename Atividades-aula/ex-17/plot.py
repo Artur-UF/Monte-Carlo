@@ -39,17 +39,17 @@ def chiT(m, N, T):
 
 
 L = [25, 50, 75, 100]           
-STEPS = 1000            
+STEPS = 5000            
 RND = 0
 IMG = 0                 
 CI  = 0                 
 TI = 2.
-TF = 4.
+TF = 3.
+dT = 0.05
 TRANS = 1000 
 CR = 0                 
 
 
-dT = .05
 nfiles = 4
 
 ts = list([] for i in range(nfiles))
@@ -61,13 +61,14 @@ chis = list([] for i in range(nfiles))
 
 f = 0
 for l in range(4):
-    ts[f], es[f], ms[f], cts[f] = np.loadtxt(sys.argv[1]+f'/medidas-L-{L[l]}-TI-{TI:.2f}-TF-{TF:.2f}-STEPS-{STEPS}-RND-{RND}-TRANS-{TRANS}.dat', unpack=True)
+    ts[f], es[f], ms[f], cts[f] = np.loadtxt(sys.argv[1]+f'/medidas-L-{L[l]}-TI-{TI:.2f}-TF-{TF:.2f}-dT-{dT:.2f}-STEPS-{STEPS}-RND-{RND}-TRANS-{TRANS}.dat', unpack=True)
     f += 1
 
 
 fig = plt.subplots(layout='constrained', figsize=(8, 4))
 
 cores = ['r', 'b', 'g', 'purple']
+markers = ['*', '^', 's', 'o']
 
 temp = np.arange(TI, TF+dT, dT)
 
@@ -75,27 +76,42 @@ for j in range(nfiles):
     chis[j] = list(chiT(ms[j][i*STEPS:(i+1)*STEPS], L[j]**2, temp[i]) for i in range(len(temp)))
 
 for j in range(nfiles):
-    ms[j] = list(sum(ms[j][i*STEPS:(i+1)*STEPS])/STEPS for i in range(len(temp)))
+    ms[j] = list(sum(abs(ms[j][i*STEPS:(i+1)*STEPS]))/STEPS for i in range(len(temp)))
+
+# Solução exata para a magnetização 
+TC = 2.269185
+x = np.linspace(TI, TC, 100)
+y = lambda x: (1-np.sinh(2/x)**(-4))**(1/8)
+
 
 plt.subplot(121)
 for i in range(nfiles):
-    plt.plot(temp, ms[i], cores[i], linestyle='-', linewidth=1, label=f'L={L[i]}')
+    plt.plot(temp, ms[i], cores[i], markersize=4, marker=markers[i], linewidth=.7, label=f'L={L[i]}', zorder=2)
+#    plt.scatter(temp, ms[i], c=cores[i], s=7, marker=markers[i], label=f'L={L[i]}', zorder=2)
+plt.plot(x, y(x), 'k', linewidth=1, label='analytic', zorder=2)
+plt.vlines(2.269185, -0.1, 0.20, color='k', linewidth=1)
 plt.xlabel('T')
-plt.ylabel('m(T)')
+plt.ylabel(r'$\left \langle \left | m(T) \right | \right \rangle$')
 plt.xlim(TI, TF)
+plt.ylim(-0.1)
 plt.legend()
 plt.grid()
 
 plt.subplot(122)
 for i in range(nfiles):
-    plt.plot(temp, chis[i], cores[i], linewidth=1, label=f'L={L[i]}')
+    plt.plot(temp, chis[i], cores[i], markersize=4, marker=markers[i], linewidth=.7, label=f'L={L[i]}', zorder=2)
+#    plt.scatter(temp, chis[i], c=cores[i], s=7, marker=markers[i], label=f'L={L[i]}', zorder=2)
+plt.vlines(2.269185, -8, 150, color='k', linewidth=1, label=r'$T_{C}$')
 plt.xlabel(r'$T$')
 plt.ylabel(r'$\chi (T)$')
 plt.xlim(TI, TF)
+plt.ylim(-8, 150)
 plt.legend()
 plt.grid()
 
 plt.suptitle(f'{TRANS} until equilibrium '+r'$\mid$'+f' {STEPS} t(MCS) '+r'$\mid \Delta T =$'+f'{dT}')
 #plt.show()
-plt.savefig(sys.argv[1]+'/plot-unico.png', dpi=400)
+plt.savefig(sys.argv[1]+'/plot.png', dpi=400)
+#plt.savefig(sys.argv[1]+'/scatter.png', dpi=400)
+
 

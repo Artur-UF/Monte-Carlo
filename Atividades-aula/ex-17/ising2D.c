@@ -24,18 +24,19 @@ ELE NÃO CRIA A PASTA, ELE SÓ RECEBE O NOME DELA E BOTA OS ARQUIVOS LÁ
 int main(int argc, char *argv[]){
     char pasta[30];
     int seed, L, STEPS, RND, IMG, CI, TRANS, CR;
-    double TI, TF;
+    double TI, TF, dT;
     sprintf(pasta, "%s", argv[1]);              // Nome da pasta
-    sscanf(argv[2],  "%d", &seed);               // Seed
-    sscanf(argv[3],  "%d", &L);                  // Aresta do sistema
-    sscanf(argv[4],  "%d", &STEPS);              // Número de MCS (por temperatura)
-    sscanf(argv[5],  "%d", &RND);                // Condição inicial de Spins (aleatório ou não)
-    sscanf(argv[6],  "%d", &IMG);                // Gravar sistemas para Gif
-    sscanf(argv[7],  "%d", &CI);                 // Gravar condição inicial
-    sscanf(argv[8], "%lf", &TI);                 // Temperatura Inicial
-    sscanf(argv[9], "%lf", &TF);                 // Temperatura Final
-    sscanf(argv[10], "%d", &TRANS);              // Final do transiente (numero de MCS que eu jogo fora)
-    sscanf(argv[11], "%d", &CR);                // Número de medidas de Correlação Espacial:CR = -1 não exclui anteriores |CR = 0 não salva |CR > 0 salva CR medidas 
+    sscanf(argv[2],  "%d", &seed);              // Seed
+    sscanf(argv[3],  "%d", &L);                 // Aresta do sistema
+    sscanf(argv[4],  "%d", &STEPS);             // Número de MCS (por temperatura)
+    sscanf(argv[5],  "%d", &RND);               // Condição inicial de Spins (aleatório ou não)
+    sscanf(argv[6],  "%d", &IMG);               // Gravar sistemas para Gif
+    sscanf(argv[7],  "%d", &CI);                // Gravar condição inicial
+    sscanf(argv[8], "%lf", &TI);                // Temperatura Inicial
+    sscanf(argv[9], "%lf", &TF);                // Temperatura Final
+    sscanf(argv[10],"%lf", &dT);                // Delta da temperatura
+    sscanf(argv[11], "%d", &TRANS);             // Final do transiente (numero de MCS que eu jogo fora)
+    sscanf(argv[12], "%d", &CR);                // Número de medidas de Correlação Espacial:CR = -1 não exclui anteriores |CR = 0 não salva |CR > 0 salva CR medidas 
  
     int **vizinhos(int l);
     int energia(int *sis, int **viz, int n, int j);
@@ -47,10 +48,10 @@ int main(int argc, char *argv[]){
 
     // Criação da pasta da simulação e comando de análise
     char saida1[100], saida2[100], saida3[100], saida4[100];
-    sprintf(saida1, "%s/medidas-L-%d-TI-%.2lf-TF-%.2lf-STEPS-%d-RND-%d-TRANS-%d.dat", pasta, L, TI, TF, STEPS, RND, TRANS);
-    sprintf(saida2,      "%s/im-L-%d-TI-%.2lf-TF-%.2lf-STEPS-%d-RND-%d-TRANS-%d.dat", pasta, L, TI, TF, STEPS, RND, TRANS);
-    sprintf(saida3,      "%s/ci-L-%d-TI-%.2lf-TF-%.2lf-STEPS-%d-RND-%d-TRANS-%d.dat", pasta, L, TI, TF, STEPS, RND, TRANS);
-    sprintf(saida4,      "%s/CR-L-%d-TI-%.2lf-TF-%.2lf-STEPS-%d-RND-%d-TRANS-%d.dat", pasta, L, TI, TF, STEPS, RND, TRANS);
+    sprintf(saida1, "%s/medidas-L-%d-TI-%.2lf-TF-%.2lf-dT-%.2lf-STEPS-%d-RND-%d-TRANS-%d.dat", pasta, L, TI, TF, dT, STEPS, RND, TRANS);
+    sprintf(saida2,      "%s/im-L-%d-TI-%.2lf-TF-%.2lf-dT-%.2lf-STEPS-%d-RND-%d-TRANS-%d.dat", pasta, L, TI, TF, dT, STEPS, RND, TRANS);
+    sprintf(saida3,      "%s/ci-L-%d-TI-%.2lf-TF-%.2lf-dT-%.2lf-STEPS-%d-RND-%d-TRANS-%d.dat", pasta, L, TI, TF, dT, STEPS, RND, TRANS);
+    sprintf(saida4,      "%s/CR-L-%d-TI-%.2lf-TF-%.2lf-dT-%.2lf-STEPS-%d-RND-%d-TRANS-%d.dat", pasta, L, TI, TF, dT, STEPS, RND, TRANS);
 
     FILE *medidas = fopen(saida1, "a");
     FILE *img = fopen(saida2, "w");
@@ -66,7 +67,6 @@ int main(int argc, char *argv[]){
     int stepcr = (CR <= 0) ? STEPS : STEPS/CR;      //Espaçamento entre medidas de C(r) 
 
     // Definição de temperatura(s)
-    double dT = .1;                     // delta de Temperatura
     int nT;
     if(TI == TF) nT = 1;
     else nT = (int)((TF-TI)/dT);
