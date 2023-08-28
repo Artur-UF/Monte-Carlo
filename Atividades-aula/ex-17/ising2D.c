@@ -3,7 +3,7 @@
 Esse código performa uma simulação do Modelo de Ising-2D de acordo com os parâmetros dados ao rodar
 o código compilado nessa seguinte ordem
 
-./a.out pasta seed L STEPS RND IMG CI T TRANS CR
+./a.out pasta seed L STEPS RND IMG CI TI TF dT TRANS CR
 
 As medidas que podem ser feitas nessa versão são:
 - Densidade de Energia
