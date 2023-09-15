@@ -83,14 +83,14 @@ escala = 1.5
 
 for i in range(4):
     axs['A'].plot(ts[i], cts[i], cores[i], linewidth=1, marker=markers[i])
-axs['A'].set(xlabel='t(MCS)', ylabel='C(t)', title=r'$L = 50$', xscale='log', yscale='log', xlim=(1, 100), ylim=(0.01, 1))
-axs['A'].plot(r, y(r)/escala, 'k', label=r'$r^{-1/4}$')
+axs['A'].set(xlabel='t(MCS)', ylabel='C(t)', title=r'$L = 50$', xscale='log') #, yscale='log', xlim=(1, 100), ylim=(0.01, 1))
+#axs['A'].plot(r, y(r)/escala, 'k', label=r'$r^{-1/4}$')
 axs['A'].grid()
 
 for i in range(4, 8):
     axs['B'].plot(ts[i], cts[i], cores[i-4], linewidth=1, marker=markers[i-4], label=f'T = {T[i-4]}')
-axs['B'].set(xlabel='t(MCS)', ylabel='C(t)', title=r'$L = 100$', xscale='log', yscale='log', xlim=(1, 100), ylim=(0.01, 1))
-axs['B'].plot(r, y(r)/escala, 'k', label=r'$r^{-1/4}$')
+axs['B'].set(xlabel='t(MCS)', ylabel='C(t)', title=r'$L = 100$', xscale='log') #, yscale='log', xlim=(1, 100), ylim=(0.01, 1))
+#axs['B'].plot(r, y(r)/escala, 'k', label=r'$r^{-1/4}$')
 axs['B'].grid()
 axs['B'].legend()
 
@@ -101,13 +101,12 @@ for i in range(4):
     axs['C'].plot(rs[i], crs[i], color=cores[i], linestyle='--', marker=markers[i], markersize=3, linewidth=1)
 for i in range(4, 8):
     axs['C'].plot(rs[i], crs[i], cores[i-4], linewidth=1, marker=markers[i-4], markersize=3)
-#axs['C'].plot([], [], label='-- L = 50\n| L=100')
 axs['C'].plot(r, y(r), 'k', label=r'$r^{-1/4}$')
 axs['C'].set(xlabel='r', ylabel='C(r)', xlim=(1, 50), ylim=(.01, 1), xscale='log', yscale='log')
 axs['C'].grid()
 axs['C'].legend(title='- - L=50\n --- L=100')
 
 #plt.show()
-plt.savefig(sys.argv[1]+'/plot.png', dpi=400)
+plt.savefig(sys.argv[1]+'/plotaux.png', dpi=400)
 
 

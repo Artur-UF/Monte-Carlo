@@ -26,7 +26,7 @@ except FileExistsError:
 info = open(f'{pasta}/info.txt', 'w')
 
 # Realiza as amostras
-os.system(f'gcc {main} -lm')
+os.system(f'gcc {main} -O3 -lm')
 print(f"L   STEPS  RND IMG CI T    TRANS  CR\n")
 for l in L:
     if l == 100: TRANS = 15000

@@ -21,37 +21,36 @@ ELE NÃO CRIA A PASTA, ELE SÓ RECEBE O NOME DELA E BOTA OS ARQUIVOS LÁ
 #include <string.h>
 #include <stdbool.h>
 
+#define PASTA "resultados"         // Define o nome da pasta na qual serão guardados os arquivos de saída 
+#define SEED 1694805433          // Define a Seed
+#define L 25             // Aresta da Rede
+#define STEPS 5000         // Número de MCS no equilíbrio
+#define RND 0           // 0: inicialização da rede toda com spin 1 || 1: inicialização aleatória da rede
+#define IMG 0           // Para gravar snapshots
+#define CI 0            // Para gravar a condição inicial
+#define TI 1.0            // Temperatura inicial
+#define TF 3.0            // Temperatua final
+#define dT 0.05            // Delta T
+#define TRANS 1000         // Número de MCS para jogar fora (transiente)
+#define CR 0            // Gravar a Correlação espacial
+
 int main(int argc, char *argv[]){
-    char pasta[30];
-    int seed, L, STEPS, RND, IMG, CI, TRANS, CR;
-    double TI, TF, dT;
-    sprintf(pasta, "%s", argv[1]);              // Nome da pasta
-    sscanf(argv[2],  "%d", &seed);              // Seed
-    sscanf(argv[3],  "%d", &L);                 // Aresta do sistema
-    sscanf(argv[4],  "%d", &STEPS);             // Número de MCS (por temperatura)
-    sscanf(argv[5],  "%d", &RND);               // Condição inicial de Spins (aleatório ou não)
-    sscanf(argv[6],  "%d", &IMG);               // Gravar sistemas para Gif
-    sscanf(argv[7],  "%d", &CI);                // Gravar condição inicial
-    sscanf(argv[8], "%lf", &TI);                // Temperatura Inicial
-    sscanf(argv[9], "%lf", &TF);                // Temperatura Final
-    sscanf(argv[10],"%lf", &dT);                // Delta da temperatura
-    sscanf(argv[11], "%d", &TRANS);             // Final do transiente (numero de MCS que eu jogo fora)
-    sscanf(argv[12], "%d", &CR);                // Número de medidas de Correlação Espacial:CR = -1 não exclui anteriores |CR = 0 não salva |CR > 0 salva CR medidas 
  
     int **vizinhos(int l);
     int energia(int *sis, int **viz, int n, int j);
     double magnetizacao(int *sis, int n);
     double uniform(double min, double max);
-    double corrtemp(int *s0, int *st, double m0, double mt, int N);
-    void corresp(double *cr, int *s, int **viz, int N, int L, double m);
+    double corrtemp(int *s0, int *st, double m0, double mt, int n);
+    void corresp(double *cr, int *s, int **viz, int n, int l, double m);
+    int seed = SEED;
     srand(seed);
 
     // Criação da pasta da simulação e comando de análise
     char saida1[100], saida2[100], saida3[100], saida4[100];
-    sprintf(saida1, "%s/medidas-L-%d-TI-%.2lf-TF-%.2lf-dT-%.2lf-STEPS-%d-RND-%d-TRANS-%d.dat", pasta, L, TI, TF, dT, STEPS, RND, TRANS);
-    sprintf(saida2,      "%s/im-L-%d-TI-%.2lf-TF-%.2lf-dT-%.2lf-STEPS-%d-RND-%d-TRANS-%d.dat", pasta, L, TI, TF, dT, STEPS, RND, TRANS);
-    sprintf(saida3,      "%s/ci-L-%d-TI-%.2lf-TF-%.2lf-dT-%.2lf-STEPS-%d-RND-%d-TRANS-%d.dat", pasta, L, TI, TF, dT, STEPS, RND, TRANS);
-    sprintf(saida4,      "%s/CR-L-%d-TI-%.2lf-TF-%.2lf-dT-%.2lf-STEPS-%d-RND-%d-TRANS-%d.dat", pasta, L, TI, TF, dT, STEPS, RND, TRANS);
+    sprintf(saida1, "%s/medidas-L-%d-TI-%.2lf-TF-%.2lf-dT-%.2lf-STEPS-%d-RND-%d-TRANS-%d.dat", PASTA, L, TI, TF, dT, STEPS, RND, TRANS);
+    sprintf(saida2,      "%s/im-L-%d-TI-%.2lf-TF-%.2lf-dT-%.2lf-STEPS-%d-RND-%d-TRANS-%d.dat", PASTA, L, TI, TF, dT, STEPS, RND, TRANS);
+    sprintf(saida3,      "%s/ci-L-%d-TI-%.2lf-TF-%.2lf-dT-%.2lf-STEPS-%d-RND-%d-TRANS-%d.dat", PASTA, L, TI, TF, dT, STEPS, RND, TRANS);
+    sprintf(saida4,      "%s/CR-L-%d-TI-%.2lf-TF-%.2lf-dT-%.2lf-STEPS-%d-RND-%d-TRANS-%d.dat", PASTA, L, TI, TF, dT, STEPS, RND, TRANS);
 
     FILE *medidas = fopen(saida1, "a");
     FILE *img = fopen(saida2, "w");
@@ -251,37 +250,37 @@ double magnetizacao(int *sis, int n){
     return m/n;
 }
 
-double corrtemp(int *s0, int *st, double m0, double mt, int N){
+double corrtemp(int *s0, int *st, double m0, double mt, int n){
     /*
     Função que mede a correlação temporal no tempo  t do sistema
     */
     double C = 0;
-    for(int i = 0; i < N; ++i){
+    for(int i = 0; i < n; ++i){
         C += s0[i]*st[i];
     }
-    C /= N;
+    C /= n;
     C -= m0*mt;
     return C;
 }
 
-void corresp(double *crr, int *s, int **viz, int N, int L, double m){
+void corresp(double *crr, int *s, int **viz, int n, int l, double m){
     /*
     Função que mede a correlação espacial do sistema
     */
     double c = 0;
     int vv, vh;
-    for(int i = 0; i < N; ++i){
+    for(int i = 0; i < n; ++i){
         vv = viz[i][3];
         vh = viz[i][0];
-        for(int l = 0; l < L/2; ++l){
+        for(int li = 0; li < l/2; ++li){
             c = s[i]*(s[vh] + s[vv]);
             vv = viz[vv][3];
             vh = viz[vh][0];
-            crr[l] += c; 
+            crr[li] += c; 
         }
     }
-    for(int l = 0; l < L/2; ++l){
-        crr[l] /= 2*N;
+    for(int li = 0; li < l/2; ++li){
+        crr[li] /= 2*n;
         //crr[l] -= m*m;
     }
 }
