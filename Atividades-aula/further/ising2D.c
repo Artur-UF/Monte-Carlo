@@ -19,8 +19,8 @@ ELE NÃO CRIA A PASTA, ELE SÓ RECEBE O NOME DELA E BOTA OS ARQUIVOS LÁ
 #include <stdbool.h>
 
 #define PASTA "teste"         // Define o nome da pasta na qual serão guardados os arquivos de saída 
-#define SEED 1694805433          // Define a Seed
-#define L 25             // Aresta da Rede
+#define SEED 69420          // Define a Seed
+#define L 50             // Aresta da Rede
 #define STEPS 5000         // Número de MCS no equilíbrio
 #define RND 0           // 0: inicialização da rede toda com spin 1 || 1: inicialização aleatória da rede
 #define IMG 0           // Para gravar snapshots
@@ -34,6 +34,7 @@ ELE NÃO CRIA A PASTA, ELE SÓ RECEBE O NOME DELA E BOTA OS ARQUIVOS LÁ
 int main(int argc, char *argv[]){
  
     int **vizinhos(int l);
+    void defexp(double *expBeta, double beta); 
     void metropolis(int *sis, int **viz, double *E, double *beta, int J, int j);
     int energia(int *sis, int **viz, int n, int j);
     double magnetizacao(int *sis, int n);
@@ -78,13 +79,14 @@ int main(int argc, char *argv[]){
     int *sis = (int*)calloc(N, sizeof(int));
     int *s0 = (int*)calloc(N, sizeof(int));
     double *crr = (double*)calloc(L/2, sizeof(double));
-    double *expdT = (double*)calloc(5, sizeof(double));
-
+    double *expBeta = (double*)calloc(3, sizeof(int));
+    defexp(expBeta, beta);
+    
     // Aplicando a Condição inicial
     if(RND) for(i = 0; i < N; ++i) sis[i] = (uniform(0., 1.) < .5) ? -1 : 1;
     else for(i = 0; i < N; ++i) sis[i] = 1;
     
-    if(CI) for(i = 0; i < N; ++i) fprintf(ci, "%d\n", sis[i]);
+    if(CI) for(i = 0; i < N; ++i) fprintf(ci, "%d\n", sis[i]); 
 
     // Loop para passar pelo transiente
     E = (double) energia(sis, viz, N, 1);
@@ -92,7 +94,7 @@ int main(int argc, char *argv[]){
     for(s = 0; s < TRANS; ++s){ //Loop sobre passos de Monte Carlo
         //MCS
         for(j = 0; j < N; ++j){
-            metropolis(sis, viz, &E, &beta, J, j);
+            metropolis(sis, viz, &E, expBeta, J, j);
         }
         // se quiser gravar o transiente vc faria aqui
     }
@@ -110,7 +112,7 @@ int main(int argc, char *argv[]){
         for(s = 0; s < STEPS; ++s){             // Roda STEPS de MCS
             //MCS
             for(j = 0; j < N; ++j){
-                metropolis(sis, viz, &E, &beta, J, j);
+                metropolis(sis, viz, &E, expBeta, J, j);
             }
             t++;
             //Fim do MCS
@@ -133,14 +135,14 @@ int main(int argc, char *argv[]){
             }
         }
         beta = 1./T[temp];
-        // aqui define exp(dE)
+        defexp(expBeta, beta);
 
         // Loop para passar pelo transiente
         E = (double) energia(sis, viz, N, 1);
         for(s = 0; s < TRANS; ++s){ //Loop sobre passos de Monte Carlo
             //MCS
             for(j = 0; j < N; ++j){
-                metropolis(sis, viz, &E, &beta, J, j);
+                metropolis(sis, viz, &E, expBeta, J, j);
             }
             // se quiser gravar o transiente vc faria aqui
         }
@@ -208,13 +210,15 @@ int **vizinhos(int l){
     return mtzviz;
 }
 
-void defdE(){
-// possível função para definir um array de valore de dE e dps fazer uma para valores de exp()
+void defexp(double *expBeta, double beta){
+   expBeta[0] = exp(-beta*0);
+   expBeta[1] = exp(-beta*4);
+   expBeta[2] = exp(-beta*8);
 }
 
-void metropolis(int *sis, int **viz, double *E, double *beta, int J, int j){
+void metropolis(int *sis, int **viz, double *E, double *expBeta, int J, int j){
     int dE = 2*J*sis[j]*(sis[viz[j][0]] + sis[viz[j][1]] + sis[viz[j][2]] + sis[viz[j][3]]);
-    if((dE < 0) || (uniform(0., 1.) < exp(-*beta*dE))){
+    if((dE < 0) || (uniform(0., 1.) < expBeta[dE/4])){
         sis[j] *= -1;
         *E += dE;
     }
@@ -271,5 +275,9 @@ void corresp(double *crr, int *s, int **viz, int n, int l, double m){
         crr[li] /= 2*n;
         //crr[l] -= m*m;
     }
+}
+
+void hoshenkopelman(int **viz, int *sis, int l){
+// Criar algoritmo que varre a rede e rotula os clusters, vai precisar de uma função auxiliar que une dois clusters
 }
 
