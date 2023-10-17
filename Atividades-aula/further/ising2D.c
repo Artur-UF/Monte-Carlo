@@ -81,7 +81,9 @@ int main(int argc, char *argv[]){
     double *crr = (double*)calloc(L/2, sizeof(double));
     double *expBeta = (double*)calloc(3, sizeof(int));
     defexp(expBeta, beta);
-    
+    int *hksis = (int*)calloc(N, sizeof(int));
+
+
     // Aplicando a Condição inicial
     if(RND) for(i = 0; i < N; ++i) sis[i] = (uniform(0., 1.) < .5) ? -1 : 1;
     else for(i = 0; i < N; ++i) sis[i] = 1;
@@ -277,7 +279,33 @@ void corresp(double *crr, int *s, int **viz, int n, int l, double m){
     }
 }
 
-void hoshenkopelman(int **viz, int *sis, int l){
+void hoshenkopelman(int **viz, int *sis, int *hksis, int l){
 // Criar algoritmo que varre a rede e rotula os clusters, vai precisar de uma função auxiliar que une dois clusters
+    int n = l*l;
+    int newflag = 1;
+
+
+    for(int i = 0; i < n: ++i){
+        if(hksis[viz[i][1] != 0 && hksis[viz[i][2]] != 0){            
+            hksis[i] = (hksis[viz[i][1]] < hksis[viz[i][2]]) ? hksis[viz[i][1]] : hksis[viz[i][2]] ;
+            //clusterunion()
+        }
+    }
+
 }
 
+void clusterunion(int **viz, int *hksis, int i, int label){
+    if(hksis[viz[i][1]] == 0 && hksis[viz[i][2]] != 0){
+        clusterunion(viz, hksis, viz[i][2], label);
+    }
+
+    if(hksis[viz[i][1]] != 0 && hksis[viz[i][2]] == 0){
+        clusterunion(viz, hksis, viz[i][1], label);
+    }
+
+
+    if(hksis[viz[i][1]] != hksis[viz[i][2]]){
+        clusterunion(viz, hksis, viz[i][1], label);
+    }
+
+}
