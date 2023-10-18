@@ -283,29 +283,26 @@ void hoshenkopelman(int **viz, int *sis, int *hksis, int l){
 // Criar algoritmo que varre a rede e rotula os clusters, vai precisar de uma função auxiliar que une dois clusters
     int n = l*l;
     int newflag = 1;
+    int labeli, labelf;
 
 
     for(int i = 0; i < n: ++i){
-        if(hksis[viz[i][1] != 0 && hksis[viz[i][2]] != 0){            
-            hksis[i] = (hksis[viz[i][1]] < hksis[viz[i][2]]) ? hksis[viz[i][1]] : hksis[viz[i][2]] ;
-            //clusterunion()
+        if(sis[i] == sis[viz[i][1]])
+
+
+        if(sis[i] == sis[viz[i][1]] && sis[i] == sis[viz[i][2]] && hksis[viz[i][1] != hksis[viz[i][2]]){
+            labeli = (hksis[viz[i][1]] < hksis[viz[i][2]]) ? hksis[viz[i][1]] : hksis[viz[i][2]];
+            labelf = (hksis[viz[i][1]] > hksis[viz[i][2]]) ? hksis[viz[i][2]] : hksis[viz[i][1]];
+            for(int i = 0; i < n; ++i) if(hksis[i] == labeli) hksis[i] = labelf;
         }
+        if(hksis[viz[i][1] == 0 && hksis[viz[i][2]] != 0){
+            
+        }
+            
     }
 
 }
 
-void clusterunion(int **viz, int *hksis, int i, int label){
-    if(hksis[viz[i][1]] == 0 && hksis[viz[i][2]] != 0){
-        clusterunion(viz, hksis, viz[i][2], label);
-    }
-
-    if(hksis[viz[i][1]] != 0 && hksis[viz[i][2]] == 0){
-        clusterunion(viz, hksis, viz[i][1], label);
-    }
-
-
-    if(hksis[viz[i][1]] != hksis[viz[i][2]]){
-        clusterunion(viz, hksis, viz[i][1], label);
-    }
-
+void clusterunion(int *hksis, int labeli, int labelf, int n){
+    for(int i = 0; i < n; ++i) if(hksis[i] == labeli) hksis[i] = labelf;
 }
