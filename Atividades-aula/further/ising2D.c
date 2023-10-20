@@ -41,6 +41,7 @@ int main(int argc, char *argv[]){
     double uniform(double min, double max);
     double corrtemp(int *s0, int *st, double m0, double mt, int n);
     void corresp(double *cr, int *s, int **viz, int n, int l, double m);
+    void hoshenkopelman(int **viz, int *sis, int *hksis, int l);
     int seed = SEED;
     srand(seed);
 
@@ -280,29 +281,45 @@ void corresp(double *crr, int *s, int **viz, int n, int l, double m){
 }
 
 void hoshenkopelman(int **viz, int *sis, int *hksis, int l){
-// Criar algoritmo que varre a rede e rotula os clusters, vai precisar de uma função auxiliar que une dois clusters
+    // Rotula clusters de spins +1 e -1
+    
     int n = l*l;
-    int newflag = 1;
+    int newlabel = 1;
     int labeli, labelf;
 
 
     for(int i = 0; i < n: ++i){
-        if(sis[i] == sis[viz[i][1]])
+        // Se ambos vizinhos podem ocupar o mesmo cluster
+        if(sis[i] == sis[viz[i][1]] && sis[i] == sis[viz[i][2]]){
+            // Se os dois vizinhos tem label igual
+            if(hksis[viz[i][1]] == hksis[viz[i][2]] && hksis[viz[i][1]] != 0) hksis[i] = hksis[viz[i][1]];
+    
+            // Se os dois vizinhos tem label diferente
+            if(hksis[viz[i][1]] != hksis[viz[i][2]] && hksis[viz[i][1]] != 0 && hksis[viz[i][2]] != 0){
+                labeli = (hksis[viz[i][1]] < hksis[viz[i][2]]) ? hksis[viz[i][1]] : hksis[viz[i][2]];
+                labelf = (hksis[viz[i][1]] > hksis[viz[i][2]]) ? hksis[viz[i][2]] : hksis[viz[i][1]];
+                for(int j = 0; j < i; ++j) if(hksis[j] == labeli) hksis[j] = labelf;
+            }
 
+            // Se somente o vizinho de cima tem label
+            if(hksis[viz[i][1]] != 0 && hksis[viz[i][2]] == 0) hksis[i] = hksis[viz[i][1]];
 
-        if(sis[i] == sis[viz[i][1]] && sis[i] == sis[viz[i][2]] && hksis[viz[i][1] != hksis[viz[i][2]]){
-            labeli = (hksis[viz[i][1]] < hksis[viz[i][2]]) ? hksis[viz[i][1]] : hksis[viz[i][2]];
-            labelf = (hksis[viz[i][1]] > hksis[viz[i][2]]) ? hksis[viz[i][2]] : hksis[viz[i][1]];
-            for(int i = 0; i < n; ++i) if(hksis[i] == labeli) hksis[i] = labelf;
+            // Se somente o vizinho da esquerda tem label
+            if(hksis[viz[i][1]] == 0 && hksis[viz[i][2]] != 0) hksis[i] = hksis[viz[i][2]];
+
+            // Se nenhum vizinho tem label
+            if(hksis[viz[i][1]] == 0 && hksis[viz[i][2]] == 0) hksis[i] = newlabel++;
         }
-        if(hksis[viz[i][1] == 0 && hksis[viz[i][2]] != 0){
-            
+
+        // Se somente o vizinho de cima pode compartilhar cluster
+        if(sis[i] == sis[viz[i][1]] && sis[i] != sis[viz[i][2]]){
+            hksis[i] = (hksis[viz[i][1]] != 0 && hksis[viz[i][2]] == 0) ? hksis[viz[i][1]] : newlabel++;           
         }
-            
+
+        // Se somente o vizinho da esquerda pode compartilhar cluster
+        if(sis[i] != sis[viz[i][1]] && sis[i] == sis[viz[i][2]]){
+            hksis[i] = (hksis[viz[i][1]] == 0 && hksis[viz[i][2]] != 0) ? hksis[viz[i][2]] : newlabel++;           
+        }
     }
-
 }
 
-void clusterunion(int *hksis, int labeli, int labelf, int n){
-    for(int i = 0; i < n; ++i) if(hksis[i] == labeli) hksis[i] = labelf;
-}
