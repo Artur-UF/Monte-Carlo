@@ -1,6 +1,9 @@
 " Número nas linhas "
 set number
 
+"Ativar mouse"
+set mouse=a
+
 " Tab como 4 espaços e indentação automática "
 set shiftwidth=4 smarttab
 
