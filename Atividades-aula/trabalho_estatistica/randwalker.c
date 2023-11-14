@@ -4,7 +4,7 @@
 #include<math.h>
 
 
-#define AM 1000         // Número de amostras
+#define AM 100         // Número de amostras
 #define NL 20           // # de divisões do espaço
 
 
@@ -12,7 +12,7 @@ int main(){
     double uniform(double min, double max);
 
     char nome[50];
-    sprintf(nome, "rw-AM-%d-NL-%d.dat", AM, NL);
+    sprintf(nome, "rwC-AM-%d-NL-%d.dat", AM, NL);
 
     FILE *ark = fopen(nome, "w");
 
@@ -31,7 +31,7 @@ int main(){
             t++;
         }
         fprintf(ark, "%d\n", t);
-        //printf("AM = %d | t = %d\r", a, t);
+        printf("AM = %d | t = %d\r", a, t);
         t = 0;
         x = 1./3.;
     }
