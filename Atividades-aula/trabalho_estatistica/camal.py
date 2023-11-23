@@ -1,7 +1,7 @@
 import random as rd
 import time
 
-AM = 100       # Número de amostras
+AM = 1000       # Número de amostras
 NL = 20         # Separações do espaço
 
 ark = open(f'rwP-AM-{AM}-NL-{NL}.dat', 'w')
@@ -15,6 +15,7 @@ start = time.time()
 for a in range(AM):
     while x < 1:
         x = x + l if rd.random() > .5 else x - l
+        x = x + l if x < 0 else x
         t += 1
     ark.write(f'{t}\n')
     print(f'AM = {a} | t = {t}', end='\r')

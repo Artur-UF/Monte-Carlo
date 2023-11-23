@@ -4,7 +4,7 @@
 #include<math.h>
 
 
-#define AM 100         // Número de amostras
+#define AM 1000         // Número de amostras
 #define NL 20           // # de divisões do espaço
 
 
@@ -22,14 +22,15 @@ int main(){
     double l = (1.-x)/NL;
     int t = 0;
 
-    printf("l = %.5lf\n", l);
-
     clock_t tic = clock();
     for(int a = 0; a < AM; ++a){
         while(x < 1){
             x = (uniform(0., 1.) > .5) ? x+l : x-l;
+            x = (x < 0) ? x+l : x; 
             t++;
+            //printf("x = %.3lf | t = %d\n", x, t);
         }
+        //printf("TPP = %d\n", t);
         fprintf(ark, "%d\n", t);
         printf("AM = %d | t = %d\r", a, t);
         t = 0;
