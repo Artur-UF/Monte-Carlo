@@ -1,7 +1,7 @@
 import random as rd
 import time
 
-AM = 1000       # Número de amostras
+AM = 10000       # Número de amostras
 NL = 20         # Separações do espaço
 
 ark = open(f'rwP-AM-{AM}-NL-{NL}.dat', 'w')
