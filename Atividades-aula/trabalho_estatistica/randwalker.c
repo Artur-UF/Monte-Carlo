@@ -7,7 +7,7 @@
 #define AM 5000         // Número de amostras
 #define DLI 20           // # de divisões iniciais
 #define DLF 100         // # de divisões finais
-#define DDL 10          // passo de DL
+#define DDL 5          // passo de DL
 
 
 int main(){
@@ -32,7 +32,7 @@ int main(){
 
     clock_t tic = clock();
     for(int i = 0; i <= ndls; ++i){
-        l = (1.-x)/dls[i];
+        l = 1./dls[i];
         for(int a = 0; a < AM; ++a){
             while(x < 1){
                 x = (uniform(0., 1.) > .5) ? x+l : x-l;
@@ -49,7 +49,8 @@ int main(){
     clock_t toc = clock();
     double time = (double)(toc - tic)/CLOCKS_PER_SEC;
 
-    printf("\nTempo de execução: %.3lfs\n", time);
+    printf("Tempo de execução: %.3lfs\n", time);
+
     fclose(ark);
     return 0;
 }
