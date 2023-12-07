@@ -21,12 +21,12 @@ for t in range(len(l)):
 
 plt.figure(layout='constrained')
 plt.plot(l[::-1], tm[::-1], 'k--', label='Simulation')
-plt.scatter(l[::-1], tau_an[::-1], c='r', marker='>', label='Analitic', zorder=3)
+plt.scatter(l[::-1], tau_an[::-1], c='r', marker='>', label='Analytic', zorder=3)
 plt.legend()
 plt.xlabel(r'$l$')
 plt.ylabel(r'$\tau$')
 plt.grid()
-plt.title('Mean First Passage Time (in function of l)')
+plt.title('Mean First Passage Time')
 plt.savefig('compare.png', dpi=400)
 
 
