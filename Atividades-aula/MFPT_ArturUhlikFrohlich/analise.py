@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+# Se não rodar tire essa linha 4
 plt.rcParams.update({"text.usetex" : True, "font.family" : "serif", "font.serif" : ["Computer Modern Serif"], "font.size" : 12})
 
 l, ndl, tm =  np.loadtxt(f'rwC_AM_5000_DLI_20_DLF_100_DDL_5.dat', unpack=True)
@@ -18,7 +19,6 @@ for t in range(len(l)):
         tau += MFPT(l[t], n)
     tau_an.append(tau)
 
-
 plt.figure(layout='constrained')
 plt.plot(l[::-1], tm[::-1], 'k--', label='Simulation')
 plt.scatter(l[::-1], tau_an[::-1], c='r', marker='>', label='Analytic', zorder=3)
@@ -27,6 +27,6 @@ plt.xlabel(r'$l$')
 plt.ylabel(r'$\tau$')
 plt.grid()
 plt.title('Mean First Passage Time')
-plt.savefig('compare.png', dpi=400)
+plt.savefig('comparacao.png', dpi=400)
 
 
