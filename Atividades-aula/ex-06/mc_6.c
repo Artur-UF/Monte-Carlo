@@ -14,7 +14,7 @@ int main(){
     // Criação do arquivo
     char titulo1[20], titulo2[20];
     sprintf(titulo1, "%i-NAM%i.txt", seed, (int) NAM);
-	FILE *saida = fopen(titulo1, "w");
+    FILE *saida = fopen(titulo1, "w");
     
     // Definições para a dinâmica
     float pi = acos(-1.);
@@ -22,7 +22,7 @@ int main(){
     double rand1, rand2;
     int t;
     double piarr[TA] = {0.};
-	double simsolta[TA] = {0.};
+    double simsolta[TA] = {0.};
     float razao;
 
     for(int amostra; amostra <= NAM; amostra++){

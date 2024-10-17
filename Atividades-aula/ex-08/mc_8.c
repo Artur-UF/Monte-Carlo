@@ -58,23 +58,23 @@ int main(){
     double estim;
     double dx, xaux, x = .5;
     double dy, yaux, y = .5;
-	double lambda = .3;
-	int amostras;
+    double lambda = .3;
+    int amostras;
 
-	int RAND;
-	if(LAMB == "FIXO") RAND = 0;
-	else RAND = 1; 
+    int RAND;
+    if(LAMB == "FIXO") RAND = 0;
+    else RAND = 1; 
 
-	// Vetores que armazenam as amostras
+    // Vetores que armazenam as amostras
     double *semREJ = (double*) malloc(TA*sizeof(double));
-	double *comREJ = (double*) malloc(TA*sizeof(double));
-	    
+    double *comREJ = (double*) malloc(TA*sizeof(double));
+
     // Vetores que armazenam as posições (pro histograma e pro "walk.png")
-	vetor *trackCREJ = (vetor*) malloc(TA*sizeof(vetor));
-	vetor *trackSREJ = (vetor*) malloc(TA*sizeof(vetor));
-	
-	clock_t tic = clock();
-	// Sem Rejeição
+    vetor *trackCREJ = (vetor*) malloc(TA*sizeof(vetor));
+    vetor *trackSREJ = (vetor*) malloc(TA*sizeof(vetor));
+
+    clock_t tic = clock();
+    // Sem Rejeição
     for(amostras = 0; amostras < NAM; amostras++){
         for(N = 1; N <= TA; ++N){
             if(RAND) r1 = uniform(.0, lambda);
@@ -85,28 +85,28 @@ int main(){
             xaux = x + dx;
             yaux = y + dy;
             if((xaux < 1.) && (xaux > 0.) && (yaux < 1.) && (yaux > 0.)){
-            	x = xaux;
-            	y = yaux;
+		x = xaux;
+		y = yaux;
             }
             if((x*x) + (y*y) < 1) n++;
-            estim = ((double) n)/((double) N);           
+            estim = ((double) n)/((double) N);
             semREJ[N] = estim;
             if(amostras == NAM-1){
-		        trackSREJ[N].x = x;
-		        trackSREJ[N].y = y;
-        	}
+		trackSREJ[N].x = x;
+		trackSREJ[N].y = y;
+            }
         }
         n = 0;
         x = .5;
         y = .5;
         seed1 += 3;
         srand(seed1);
-		fwrite(semREJ, sizeof(double), TA, simulaS);
-		/*for(N = 1; N <= TA; ++N){
-        	//fprintf(simulaS, "%d\t%lf\n", N, semREJ[N-1]);
-    	}*/
+	fwrite(semREJ, sizeof(double), TA, simulaS);
+	/*for(N = 1; N <= TA; ++N){
+        //fprintf(simulaS, "%d\t%lf\n", N, semREJ[N-1]);
+	}*/
     }
-    
+
     // Com Rejeição
     x = .5;
     y = .5;
@@ -119,23 +119,23 @@ int main(){
             r2 = uniform(0., 2*pi);
             dx = r1*cos(r2);
             dy = r1*sin(r2);
-			xaux = x + dx;
-			yaux = y + dy;
+	    xaux = x + dx;
+	    yaux = y + dy;
             if((xaux < 1.) && (xaux > 0.) && (yaux < 1.) && (yaux > 0.)){
-            	x = xaux;
-            	y = yaux;
+		x = xaux;
+		y = yaux;
             	if((x*x) + (y*y) < 1) n++;
-			    estim = ((double) n)/((double) N);           
-				comREJ[N] = estim;
+		estim = ((double) n)/((double) N);
+		comREJ[N] = estim;
             	if(amostras == NAM-1){
-					trackCREJ[N].x = x;
-					trackCREJ[N].y = y;            	
-				}
+		    trackCREJ[N].x = x;
+		    trackCREJ[N].y = y;
+		}
             }else N--;
         }
         n = 0;
-		x = .5;
-		y = .5;
+	x = .5;
+	y = .5;
         seed2 += 3;
         srand(seed2);
         fwrite(comREJ, sizeof(double), TA, simulaC);

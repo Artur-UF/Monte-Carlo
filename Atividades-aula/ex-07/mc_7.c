@@ -29,7 +29,7 @@ int main(){
         for(t = 0; t < TA; ++t){
             rand1 = uniform(0., 1.);
             rand2 = uniform(0., 1.);
-        	if(rand2 < pow(sin(1./rand1), 2)) Nac++;
+            if(rand2 < pow(sin(1./rand1), 2)) Nac++;
             razao = ((float) Nac)/(t);        
             if(amostra == NAM) simsolta[t] += razao;
             else intarr[t] += razao;
