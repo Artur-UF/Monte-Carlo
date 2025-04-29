@@ -68,7 +68,7 @@ for l in range(1, 4):
     f += 1
 
 
-fig = plt.subplots(layout='constrained', figsize=(8, 4))
+fig = plt.subplots(1, 2, layout='constrained', figsize=(8, 4))
 
 cores = ['r', 'b', 'g', 'purple']
 markers = ['*', '^', 's', 'o']
